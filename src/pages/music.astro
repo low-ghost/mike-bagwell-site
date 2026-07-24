@@ -1,0 +1,59 @@
+---
+import Base from '../layouts/Base.astro';
+
+const tracks = [
+  {
+    title: 'When we look at things we steal their color and grow heavy under their weight',
+    href: 'https://lowgh0st.bandcamp.com/track/when-we-look-at-things-we-steal-their-color-and-grow-heavy-under-their-weight',
+    embed: 'https://bandcamp.com/EmbeddedPlayer/track=1930962230/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/',
+  },
+  {
+    title: 'it is all i can do but adjust myself into the sky',
+    href: 'https://lowgh0st.bandcamp.com/track/it-is-all-i-can-do-but-adjust-myself-into-the-sky',
+    embed: 'https://bandcamp.com/EmbeddedPlayer/track=3670873206/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/',
+  },
+  {
+    title: 'modern as when it always being is and a little space curled among us',
+    href: 'https://lowgh0st.bandcamp.com/track/modern-as-when-it-always-being-is-and-a-little-space-curled-among-us',
+    embed: 'https://bandcamp.com/EmbeddedPlayer/track=1757284466/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/',
+  },
+];
+---
+
+<Base
+  title="Music - Mike Bagwell"
+  description="Music by low_ghost — Bandcamp embeds"
+>
+  <div class="page-shell">
+    <header class="reveal mb-12">
+      <h1 class="font-display text-5xl sm:text-6xl font-extrabold tracking-tight text-[var(--color-ink)] mb-4">
+        Just a bit of noise
+      </h1>
+      <p class="text-xl text-[var(--color-mute)] max-w-3xl">
+        Tracks from <a class="font-semibold text-[var(--color-accent-deep)] underline underline-offset-4 hover:text-[var(--color-accent)]" href="https://lowgh0st.bandcamp.com" target="_blank" rel="noopener noreferrer">lowgh0st.bandcamp.com</a>.
+      </p>
+    </header>
+
+    <div class="reveal grid gap-10 sm:grid-cols-2 lg:grid-cols-3 justify-items-center">
+      {tracks.map((track) => (
+        <div class="bandcamp-embed w-full max-w-[350px]">
+          <iframe
+            style="border: 0; width: 100%; max-width: 350px; height: 442px;"
+            src={track.embed}
+            seamless
+            loading="lazy"
+            title={track.title}
+          />
+          <a
+            href={track.href}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="sr-only"
+          >
+            {track.title} by low_ghost
+          </a>
+        </div>
+      ))}
+    </div>
+  </div>
+</Base>

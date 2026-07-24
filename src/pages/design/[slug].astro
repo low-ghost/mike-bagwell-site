@@ -1,0 +1,98 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import Base from '../../layouts/Base.astro';
+import { ImageLightbox } from '../../components/ImageLightbox';
+
+export async function getStaticPaths() {
+  const designProjects = await getCollection('design');
+  return designProjects.map((project) => ({
+    params: { slug: project.data.slug },
+    props: { project },
+  }));
+}
+
+const { project } = Astro.props;
+const { title, body, coverImage, images, externalUrl } = project.data;
+
+/** Strip Squarespace chrome, especially the broken Instagram social block that left a huge empty clickable gap. */
+function cleanDesignBody(html: string): string {
+  let out = html;
+  // Social blocks are usually trailing and often truncated mid-SVG in the extract.
+  out = out.replace(/<div class="sqs-block-socialaccountlinks[\s\S]*/gi, '');
+  out = out.replace(/<a[^>]*instagram\.com\/low_gh0st[^>]*>[\s\S]*?(?:<\/a>|$)/gi, '');
+  out = out.replace(/style="[^"]*"/g, '');
+  out = out.replace(/<style[\s\S]*?<\/style>/g, '');
+  out = out.replace(/<div class="sqs-[^"]*"[^>]*>/g, '<div>');
+  return out.trim();
+}
+
+const cleanBody = body ? cleanDesignBody(body) : '';
+
+const lightboxImages = await Promise.all(
+  [
+    ...(coverImage ? [{ path: coverImage, title }] : []),
+    ...images,
+  ].map(async (image) => {
+    const optimized = await getImage({
+      src: image.path,
+      widths: [600, 1000, 1600],
+      formats: ['webp'],
+    });
+    return {
+      src: optimized.src,
+      srcSet: optimized.srcSet.attribute,
+      alt: image.title || title,
+    };
+  })
+);
+---
+
+<Base
+  title={`${title} - Design - Mike Bagwell`}
+  description={`Design project: ${title}`}
+>
+  <div class="page-shell">
+    <nav class="mb-8 reveal">
+      <a
+        href="/design"
+        class="text-[var(--color-mute)] hover:text-[var(--color-ink)] transition-colors font-semibold"
+      >
+        ← Back to Design
+      </a>
+    </nav>
+
+    <article class="space-y-12">
+      <header class="space-y-6 reveal">
+        <h1 class="font-display text-5xl sm:text-6xl font-extrabold tracking-tight text-[var(--color-ink)]">
+          {title}
+        </h1>
+
+        {cleanBody && (
+          <div
+            class="prose prose-xl max-w-3xl"
+            set:html={cleanBody}
+          />
+        )}
+
+        {externalUrl && (
+          <a
+            href={externalUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="inline-flex items-center gap-2 text-[var(--color-accent-deep)] hover:text-[var(--color-accent)] font-semibold"
+          >
+            View Project →
+          </a>
+        )}
+      </header>
+
+      {lightboxImages.length > 0 && (
+        <section class="space-y-6 reveal">
+          <h2 class="font-display text-3xl font-bold tracking-tight text-[var(--color-ink)]">Gallery</h2>
+          <ImageLightbox client:load images={lightboxImages} />
+        </section>
+      )}
+    </article>
+  </div>
+</Base>

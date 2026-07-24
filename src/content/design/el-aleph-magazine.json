@@ -1,0 +1,88 @@
+{
+  "title": "El Aleph Magazine",
+  "slug": "el-aleph-magazine",
+  "description": "El Aleph Magazine",
+  "body": "<div class=\"sqs-text-block-container\">\n  \n  <div class=\"sqs-html-content\" data-sqsp-text-block-content><h2 style=\"white-space:pre-wrap;\">El Aleph Magazine</h2>\n\n<div class=\"sqs-text-block-container\">\n  \n  <div class=\"sqs-html-content\" data-sqsp-text-block-content><p style=\"text-align:center;white-space:pre-wrap;\" class=\"sqsrte-large\">El Aleph Press’ first magazine is a handmade collection of over 50 phenomenal artists and writers. The publication exploits the full possibilities of print and digital media by combining poetry, fiction, artwork and comics in a hand-bound volume with silk-screened covers, full color interior, a sewn chapbook, and gorgeous painted menko card inserts as well as an extensive online showcase of multimedia poems, videos and spoken word projects linked through QR codes.</p>\n\n\n  \n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n\n<div class=\"sqs-block-socialaccountlinks-content\">\n  <div class=\"sqs-svg-icon--outer social-icon-alignment-center social-icons-color-black social-icons-size-medium social-icons-style-regular \">\n    <style>\n      \n      #block-f103d0b2e3d5b460e844 {\n        --social-icons-justify-content: center;\n        --social-icons-dimension: 24px;--social-icons-gap: 14px;\n        --social-icons-border-thickness: 2px;\n      }\n\n      \n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--wrapper {\n        --si-border-radius: 0;--si-scale: 2;--si-box-shadow: none;--si-fill-icon: var(--si-primary);--si-fill-icon-fade: var(--si-primary-faded);--si-fill-icon-hover: var(--si-primary);--si-fill-mask: transparent;--si-fill-mask-fade: transparent;--si-fill-mask-hover: transparent;--si-bg: transparent;--si-bg-fade: transparent;--si-bg-hover: transparent;\n      }\n\n      \n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list {\n        justify-content: var(--social-icons-justify-content, center);\n        column-gap: var(--social-icons-gap, 12px);\n        row-gap: var(--social-icons-gap, 12px);\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--wrapper {\n        width: var(--social-icons-dimension, 20px);\n        height: var(--social-icons-dimension, 20px);\n        margin: 0;\n        border: none; \n        background-color: var(--si-bg, transparent);\n        box-shadow: var(--si-box-shadow, none);\n        border-radius: var(--si-border-radius, 0);\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--wrapper > div {\n        transform: scale(var(--si-scale, 1));\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-use--icon {\n        fill: var(--si-fill-icon, transparent);\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-use--mask {\n        fill: var(--si-fill-mask, transparent);\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list:hover .sqs-svg-icon--wrapper {\n        background-color: var(--si-bg-fade, var(--si-bg, transparent));\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list:hover .sqs-svg-icon--wrapper .sqs-use--icon {\n        fill: var(--si-fill-icon-fade, var(--si-fill-icon, transparent));\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list:hover .sqs-svg-icon--wrapper .sqs-use--mask {\n        fill: var(--si-fill-mask-fade, var(--si-fill-mask, transparent));\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list:hover .sqs-svg-icon--wrapper:hover {\n        background-color: var(--si-bg-hover, var(--si-bg, transparent));\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list:hover .sqs-svg-icon--wrapper:hover .sqs-use--icon {\n        fill: var(--si-fill-icon-hover, var(--si-fill-icon, transparent));\n      }\n      #block-f103d0b2e3d5b460e844 .sqs-svg-icon--list:hover .sqs-svg-icon--wrapper:hover .sqs-use--mask {\n        fill: var(--si-fill-mask-hover, var(--si-fill-mask, transparent));\n      }\n    </style>\n    <nav class=\"sqs-svg-icon--list\">\n      \n        \n          <a\n            href=\"https://www.instagram.com/low_gh0st/\"\n            target=\"_blank\"\n            class=\"sqs-svg-icon--wrapper instagram-unauth\"\n            aria-label=\"Instagram\"\n          >\n            <div>\n              <svg class=\"sqs-svg-icon--social\" viewBox=\"0 0 64 64\">\n                <use class=\"sqs-use--icon\" xlink:href=\"/universal/svg/social-accounts.svg#instagram-unauth-icon\"></use>\n                <use class=\"sqs-use--mask\" xlink:href=\"/universal/svg/social-accounts.svg#instagram-unauth-mask\"></use>\n              </svg>\n            ",
+  "coverImage": "../../assets/design/el-aleph-magazine/el-aleph-magazine.jpeg",
+  "images": [
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-00.jpeg",
+      "title": "Image 1"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-01.jpeg",
+      "title": "Image 2"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-02.png",
+      "title": "Image 3"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-03.jpeg",
+      "title": "Image 4"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-04.png",
+      "title": "Image 5"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-05.jpeg",
+      "title": "Image 6"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-06.jpeg",
+      "title": "Image 7"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-07.jpeg",
+      "title": "Image 8"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-08.png",
+      "title": "Image 9"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-09.jpeg",
+      "title": "Image 10"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-10.JPG",
+      "title": "Image 11"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-11.JPG",
+      "title": "Image 12"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-12.JPG",
+      "title": "Image 13"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-13.JPG",
+      "title": "Image 14"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-14.JPG",
+      "title": "Image 15"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-15.JPG",
+      "title": "Image 16"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-16.JPG",
+      "title": "Image 17"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-17.JPG",
+      "title": "Image 18"
+    },
+    {
+      "path": "../../assets/design/el-aleph-magazine/el-aleph-magazine-18.JPG",
+      "title": "Image 19"
+    }
+  ],
+  "externalUrl": null,
+  "publishDate": "2019-07-02T15:12:50.612Z",
+  "order": 0
+}

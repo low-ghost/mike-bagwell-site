@@ -1,0 +1,70 @@
+---
+import { getCollection } from 'astro:content';
+import { getImage } from 'astro:assets';
+import PublicationCard from './PublicationCard.astro';
+import { FeaturedCarousel } from './FeaturedCarousel';
+
+export interface Props {
+  limit?: number;
+  featured?: boolean;
+  carousel?: boolean;
+}
+
+const { limit, featured, carousel = false } = Astro.props;
+
+const allPublications = await getCollection('publications');
+
+let publications = allPublications
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+if (featured !== undefined) {
+  publications = publications.filter((p) => p.data.featured === featured);
+}
+
+if (limit) {
+  publications = publications.slice(0, limit);
+}
+
+const bricks = ['tall', 'portrait', 'square', 'short'] as const;
+
+const carouselSlides = carousel
+  ? await Promise.all(
+      publications.map(async (pub) => {
+        const optimized = await getImage({
+          src: pub.data.image,
+          widths: [480, 720, 1000],
+          formats: ['webp'],
+        });
+        return {
+          title: pub.data.title,
+          publisher: pub.data.publisher,
+          url: pub.data.url,
+          pubDate: pub.data.pubDate.toISOString(),
+          excerpt: pub.data.excerpt,
+          imageSrc: optimized.src,
+          imageSrcSet: optimized.srcSet.attribute,
+          imageSizes: '(max-width: 768px) 90vw, 380px',
+        };
+      })
+    )
+  : [];
+---
+
+{carousel ? (
+  <FeaturedCarousel client:load slides={carouselSlides} />
+) : (
+  <div class="pub-masonry">
+    {publications.map((pub, i) => (
+      <PublicationCard
+        title={pub.data.title}
+        publisher={pub.data.publisher}
+        url={pub.data.url}
+        pubDate={pub.data.pubDate}
+        image={pub.data.image}
+        excerpt={pub.data.excerpt}
+        archivedBody={pub.data.archivedBody}
+        brick={bricks[i % bricks.length]}
+      />
+    ))}
+  </div>
+)}

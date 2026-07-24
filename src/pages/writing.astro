@@ -1,0 +1,30 @@
+---
+import Base from '../layouts/Base.astro';
+import Gallery from '../components/Gallery.astro';
+import { getCollection } from 'astro:content';
+
+const publications = (await getCollection('publications'))
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const totalCount = publications.length;
+---
+
+<Base
+  title="Writing - Mike Bagwell"
+  description="Browse all published poems and creative work by Mike Bagwell"
+>
+  <div class="page-shell">
+    <div class="reveal mb-12">
+      <h1 class="font-display text-5xl sm:text-6xl font-extrabold tracking-tight text-[var(--color-ink)] mb-4">
+        Writing
+      </h1>
+      <p class="text-xl text-[var(--color-mute)]">
+        {totalCount} publications. Hover a cover for an excerpt.
+      </p>
+    </div>
+
+    <div class="reveal">
+      <Gallery />
+    </div>
+  </div>
+</Base>

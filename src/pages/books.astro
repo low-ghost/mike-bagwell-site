@@ -1,0 +1,166 @@
+---
+import Base from '../layouts/Base.astro';
+import { Image } from 'astro:assets';
+import courtOfWands from '../assets/books/court-of-wands.png';
+import collisionInMidair from '../assets/books/collision-in-midair.png';
+import orElseTheyAreTrees from '../assets/books/or-else-they-are-trees.jpeg';
+import whenWeLookAtThings from '../assets/books/when-we-look-at-things.png';
+import highPriestess from '../assets/books/high-priestess.png';
+---
+
+<Base 
+  title="Books - Mike Bagwell"
+  description="Chapbooks and published collections by Mike Bagwell"
+>
+  <div class="page-shell">
+    <header class="reveal mb-12">
+      <h1 class="font-display text-5xl sm:text-6xl font-extrabold tracking-tight text-[var(--color-ink)]">
+        Books
+      </h1>
+      <p class="mt-4 text-xl text-[var(--color-mute)] max-w-2xl">
+        Chapbooks and published collections.
+      </p>
+    </header>
+
+    <div class="space-y-24">
+      <section class="reveal grid md:grid-cols-[360px_1fr] gap-10 lg:gap-14 items-start">
+        <div class="w-full max-w-[360px] mx-auto">
+          <Image 
+            src={courtOfWands} 
+            alt="Poem of Thanks: A Court of Wands cover" 
+            class="w-full h-auto rounded-sm shadow-[0_24px_50px_-30px_rgba(0,0,0,0.55)]"
+            widths={[360, 720]}
+            sizes="(max-width: 768px) 360px, 360px"
+          />
+        </div>
+        <div>
+          <h2 class="font-display text-3xl tracking-tight mb-3">
+            <em>Poem of Thanks: A Court of Wands</em>
+          </h2>
+          <p class="text-lg text-[var(--color-mute)] mb-4">
+            Metatron Press, 2025
+          </p>
+          <div class="prose prose-xl">
+            <p>
+              Composed over twelve years, with simultaneous journeys through the Chinese zodiac, Hieronymus Bosch's <em>The Garden of Earthly Delights</em>, and the poet's life, these poems are held together by constraints, linguistic play, and a fascination with structure as an enzyme of creativity.
+            </p>
+            <p>
+              <a href="https://metatronpress.com" target="_blank" rel="noopener noreferrer">Available from Metatron Press</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal grid md:grid-cols-[360px_1fr] gap-10 lg:gap-14 items-start">
+        <div class="w-full max-w-[360px] mx-auto">
+          <Image 
+            src={collisionInMidair} 
+            alt="A Collision of Soul in Midair cover" 
+            class="w-full h-auto rounded-sm shadow-[0_24px_50px_-30px_rgba(0,0,0,0.55)]"
+            widths={[360, 720]}
+            sizes="(max-width: 768px) 360px, 360px"
+          />
+        </div>
+        <div>
+          <h2 class="font-display text-3xl tracking-tight mb-3">
+            <a href="https://bottlecap.press/products/collision" target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
+              <em>A Collision of Soul in Midair</em>
+            </a>
+          </h2>
+          <p class="text-lg text-[var(--color-mute)] mb-4">
+            Bottlecap Press, 2023
+          </p>
+          <div class="prose prose-xl">
+            <p>
+              A vibrant tour of many realms, a nimble flight through wild phantasmagoria, abundance, and the slippery mechanics of meaning. A delight in the overabundance of signs, a fascination with structure as an enzyme of creativity.
+            </p>
+            <p>
+              <a href="https://bottlecap.press/products/collision" target="_blank" rel="noopener noreferrer">Available from Bottlecap Press</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal grid md:grid-cols-[360px_1fr] gap-10 lg:gap-14 items-start">
+        <div class="w-full max-w-[360px] mx-auto">
+          <Image 
+            src={orElseTheyAreTrees} 
+            alt="Or Else They Are Trees cover" 
+            class="w-full h-auto rounded-sm shadow-[0_24px_50px_-30px_rgba(0,0,0,0.55)]"
+            widths={[360, 720]}
+            sizes="(max-width: 768px) 360px, 360px"
+          />
+        </div>
+        <div>
+          <h2 class="font-display text-3xl tracking-tight mb-3">
+            <em>Or Else They Are Trees</em>
+          </h2>
+          <p class="text-lg text-[var(--color-mute)] mb-4">
+            El Aleph Press
+          </p>
+          <div class="prose prose-xl">
+            <p>
+              The first publication by El Aleph Press, a collaboration between Rebecca Miller and Michael Bagwell. The collection pairs artwork and poetry side by side in a gorgeous full-color layout.
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal grid md:grid-cols-[360px_1fr] gap-10 lg:gap-14 items-start">
+        <div class="w-full max-w-[360px] mx-auto">
+          <Image 
+            src={whenWeLookAtThings} 
+            alt="When We Look at Things We Steal Their Color cover" 
+            class="w-full h-auto rounded-sm shadow-[0_24px_50px_-30px_rgba(0,0,0,0.55)]"
+            widths={[360, 720]}
+            sizes="(max-width: 768px) 360px, 360px"
+          />
+        </div>
+        <div>
+          <h2 class="font-display text-3xl tracking-tight mb-3">
+            <em>When We Look at Things We Steal Their Color and Grow Heavy Under Their Weight</em>
+          </h2>
+          <p class="text-lg text-[var(--color-mute)] mb-4">
+            Rinky Dink Press, 2024
+          </p>
+          <div class="prose prose-xl">
+            <p>
+              A micro-chapbook.
+            </p>
+            <p>
+              <a href="https://rinky-dink-press.square.site/product/series-11/50" target="_blank" rel="noopener noreferrer">Available from Rinky Dink Press</a>
+            </p>
+          </div>
+        </div>
+      </section>
+
+      <section class="reveal grid md:grid-cols-[360px_1fr] gap-10 lg:gap-14 items-start">
+        <div class="w-full max-w-[360px] mx-auto">
+          <Image 
+            src={highPriestess} 
+            alt="Poem of Thanks: The High Priestess cover" 
+            class="w-full h-auto rounded-sm shadow-[0_24px_50px_-30px_rgba(0,0,0,0.55)]"
+            widths={[360, 720]}
+            sizes="(max-width: 768px) 360px, 360px"
+          />
+        </div>
+        <div>
+          <h2 class="font-display text-3xl tracking-tight mb-3">
+            <em>Poem of Thanks: The High Priestess</em>
+          </h2>
+          <p class="text-lg text-[var(--color-mute)] mb-4">
+            Ghost City Press, 2024
+          </p>
+          <div class="prose prose-xl">
+            <p>
+              An excerpt from the book-length <em>Poem of Thanks</em>. Cover art by Rebecca Miller.
+            </p>
+            <p>
+              <a href="https://ghostcitypress.com/2024-summer-series/poem-of-thanks-the-high-priestess" target="_blank" rel="noopener noreferrer">Available for free from Ghost City Press</a>
+            </p>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</Base>
