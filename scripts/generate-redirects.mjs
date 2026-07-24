@@ -41,8 +41,11 @@ async function generateRedirects() {
     '',
     ...redirects,
     '',
-    '# Catch-all fallback',
-    '/writing/* /writing 301',
+    // Use :slug (not /*). A splat also matches the empty segment in /writing/,
+    // which fights Cloudflare's /writing → /writing/ trailing-slash redirect
+    // and causes a redirect loop.
+    '# Catch-all fallback for unknown old slugs',
+    '/writing/:slug /writing 301',
   ].join('\n');
 
   await writeFile(OUTPUT_FILE, redirectsContent);

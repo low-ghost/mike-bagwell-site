@@ -16,6 +16,7 @@
 /writing/angry-old-man /writing 301
 /writing/baboon-moon /writing 301
 /writing/ben-segals-tunnels https://annuletpoeticsjournal.com/Mike-Bagwell-On-Ben-Segal-s-Tunnels 301
+/writing/blue-bag-press https://issue01.org/mike-bagwell 301
 /writing/bruiser https://www.bruisermag.com/two-poems-by-mike-bagwell 301
 /writing/buffalo https://buffalojournal.tumblr.com/post/749736204959956992/from-poem-of-thanks-vi 301
 /writing/carrying-water https://oneartpoetry.com/2023/09/14/carrying-water-by-mike-bagwell/ 301
@@ -23,6 +24,7 @@
 /writing/common-measure https://commonmeasure.press/ 301
 /writing/constellations /writing 301
 /writing/couplet-poetry https://coupletpoetry.com/mike-bagwell/ 301
+/writing/discount-guillotine https://www.discountguillotine.com/shop/p/-discount-guillotine-issue-1 301
 /writing/dissipate /writing 301
 /writing/end-days /writing 301
 /writing/graphic-violence-lit https://graphicviolencelit.wordpress.com/2023/08/07/metaphysics/ 301
@@ -63,5 +65,5 @@
 /writing/when-we-look-at-things-we-steal-their-color-and-grow-heavy-under-their-weight https://rinkydinkpress.com/ 301
 /writing/where-we-are-headed https://www.bullshitlit.com/shop/p/antho3 301
 
-# Catch-all fallback
-/writing/* /writing 301
+# Catch-all fallback for unknown old slugs
+/writing/:slug /writing 301
