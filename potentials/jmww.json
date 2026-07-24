@@ -8,7 +8,25 @@
   "pieceType": "micro",
   "acceptedDate": "2025-01-25",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 363,
-  "venueUrl": "https://jmwwblog.wordpress.com/"
+  "venueUrl": "https://jmwwblog.wordpress.com/",
+  "research": {
+    "url": "https://jmwwblog.wordpress.com/2025/02/07/excerpts-from-poem-of-thanks-the-queen-of-cups/",
+    "excerpt": "water boils its name down / to a small hope / try try try with an ergonomic moon / to cut out of this life into the other",
+    "pubDate": "2025-02-07",
+    "coverPath": "/Users/mikebagwell/git/mike-bagwell-site/potentials/_staging/jmww/cover.jpeg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2025-02-07"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-24T20:12:56.864Z"
+  },
+  "convertedAt": "2026-07-24T20:12:56.904Z",
+  "publicationSlug": "jmww"
 }

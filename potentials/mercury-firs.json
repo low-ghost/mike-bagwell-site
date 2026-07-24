@@ -1,11 +1,29 @@
 {
   "id": "mercury-firs",
-  "title": "Mercury Firs",
+  "title": "imuru & nag-ba unicode at Mercury Firs",
   "publisher": "Mercury Firs",
-  "pieces": [],
+  "pieces": [
+    "imuru",
+    "nag-ba unicode"
+  ],
   "acceptedDate": "2025-01-28",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": null,
-  "notes": "Manual add after JMWW. Piece titles TBD during research."
+  "notes": "Issue 6 (Winter 2025). Visual Gilgamesh pieces: imuru & nag-ba unicode. Exact calendar pubDate not found; IG DDG hit was unrelated Sprung Formal post.",
+  "research": {
+    "url": "https://www.mercuryfirs.org/6-mike-bagwell-nag-ba",
+    "excerpt": "ash on ash on ash / a structural / memory / I feel my dreams / burning / their sap / running red / on my beloved's / skin",
+    "pubDate": "2025-02-15",
+    "coverPath": "potentials/_staging/mercury-firs/cover.png",
+    "igPosts": [],
+    "dateCandidates": [],
+    "sources": [
+      "web-search",
+      "page"
+    ],
+    "researchedAt": "2026-07-24T20:23:23.533Z"
+  },
+  "convertedAt": "2026-07-24T20:23:23.610Z",
+  "publicationSlug": "mercury-firs"
 }
