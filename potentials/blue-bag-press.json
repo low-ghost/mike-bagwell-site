@@ -1,0 +1,36 @@
+{
+  "id": "blue-bag-press",
+  "title": "Poem of Thanks: Two of Swords at Blue Bag Press",
+  "publisher": "Blue Bag Press",
+  "pieces": [
+    "Poem of Thanks: Two of Swords"
+  ],
+  "pieceType": "micro",
+  "acceptedDate": "2025-01-20",
+  "published": true,
+  "status": "converted",
+  "submissionId": 353,
+  "notes": "on the two of swords, misnomer, what if I wore, colors swallow everything, big fan of cereal myself, watering woes",
+  "research": {
+    "url": "https://issue01.org/mike-bagwell",
+    "excerpt": "fuck sight / don't want it / don't need it / hold these two swords / and go cut that shit / fucking cut the moon down / feed it to the dogs",
+    "pubDate": "2025-04-20",
+    "coverPath": "potentials/_staging/blue-bag-press/cover.png",
+    "igPosts": [],
+    "dateCandidates": [
+      "2025-04-22",
+      "2026-08-29",
+      "2023-12-04",
+      "2025-11-04",
+      "2025-04-10"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-24T18:43:28.155Z"
+  },
+  "convertedAt": "2026-07-24T18:43:28.194Z",
+  "publicationSlug": "blue-bag-press"
+}

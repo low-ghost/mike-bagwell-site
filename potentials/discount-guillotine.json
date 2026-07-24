@@ -1,0 +1,42 @@
+{
+  "id": "discount-guillotine",
+  "title": "The Body Schema at Discount Guillotine",
+  "publisher": "Discount Guillotine",
+  "pieces": [
+    "The Body Schema"
+  ],
+  "acceptedDate": "2024-12-28",
+  "published": true,
+  "status": "converted",
+  "submissionId": 335,
+  "research": {
+    "url": "https://www.discountguillotine.com/shop/p/-discount-guillotine-issue-1",
+    "excerpt": "tell the clouds not to be / strangers anymore // tell the clouds to / walk straight through me",
+    "pubDate": "2025-02-10",
+    "coverPath": "potentials/_staging/discount-guillotine/cover.png",
+    "igPosts": [
+      {
+        "shortcode": "DNoALMxvrHX",
+        "date": "2025-08-21",
+        "url": "https://www.instagram.com/p/DNoALMxvrHX/",
+        "username": null,
+        "paths": []
+      }
+    ],
+    "dateCandidates": [
+      "2025-02-10",
+      "2025-01-17",
+      "2025-01-21",
+      "2025-08-21"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "ig",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-24T18:27:45.605Z"
+  },
+  "convertedAt": "2026-07-24T18:36:21.234Z",
+  "publicationSlug": "discount-guillotine"
+}
