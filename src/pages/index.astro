@@ -6,11 +6,6 @@ import { Image } from 'astro:assets';
 import { renderBioMarkdown } from '../lib/bio-markdown';
 import bioMarkdown from '../content/bio.md?raw';
 import portrait from '../assets/author/portrait.jpg';
-import courtOfWands from '../assets/books/court-of-wands.png';
-import collisionInMidair from '../assets/books/collision-in-midair.png';
-import orElseTheyAreTrees from '../assets/books/or-else-they-are-trees.jpeg';
-import whenWeLookAtThings from '../assets/books/when-we-look-at-things.png';
-import highPriestess from '../assets/books/high-priestess.png';
 
 const bioHtml = renderBioMarkdown(bioMarkdown);
 
@@ -18,43 +13,9 @@ const featuredPublications = (await getCollection('publications'))
   .filter((p) => p.data.featured)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
-const books = [
-  {
-    title: 'Poem of Thanks: A Court of Wands',
-    press: 'Metatron Press, 2025',
-    href: 'https://metatronpress.com',
-    image: courtOfWands,
-    external: true,
-  },
-  {
-    title: 'A Collision of Soul in Midair',
-    press: 'Bottlecap Press, 2023',
-    href: 'https://bottlecap.press/products/collision',
-    image: collisionInMidair,
-    external: true,
-  },
-  {
-    title: 'Or Else They Are Trees',
-    press: 'El Aleph Press',
-    href: '/books',
-    image: orElseTheyAreTrees,
-    external: false,
-  },
-  {
-    title: 'When We Look at Things…',
-    press: 'Rinky Dink Press, 2024',
-    href: 'https://rinky-dink-press.square.site/product/series-11/50',
-    image: whenWeLookAtThings,
-    external: true,
-  },
-  {
-    title: 'Poem of Thanks: The High Priestess',
-    press: 'Ghost City Press, 2024',
-    href: 'https://ghostcitypress.com/2024-summer-series/poem-of-thanks-the-high-priestess',
-    image: highPriestess,
-    external: true,
-  },
-];
+const books = (await getCollection('books'))
+  .filter((b) => !b.data.hideFromMain)
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 ---
 
 <Base>
@@ -74,7 +35,7 @@ const books = [
       </div>
 
       <div>
-        <h1 class="font-display text-5xl sm:text-6xl lg:text-[4.25rem] font-extrabold leading-[1.05] tracking-tight text-[var(--color-ink)] mb-6 pb-1">
+        <h1 class="font-display text-[clamp(5.5rem,13vw,8rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-6">
           Mike Bagwell
         </h1>
         <div class="prose prose-xl max-w-3xl" set:html={bioHtml} />
@@ -84,7 +45,7 @@ const books = [
     <section class="reveal mb-20 lg:mb-28">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div>
-          <h2 class="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--color-ink)]">
+          <h2 class="display-section text-[var(--color-ink)]">
             Books
           </h2>
           <p class="mt-3 text-lg text-[var(--color-mute)] max-w-2xl">
@@ -95,26 +56,32 @@ const books = [
       </div>
 
       <div class="book-shelf" role="list">
-        {books.map((book) => (
-          <a
-            href={book.href}
-            class="book-tile"
-            role="listitem"
-            {...(book.external
-              ? { target: '_blank', rel: 'noopener noreferrer' }
-              : {})}
-          >
-            <Image
-              src={book.image}
-              alt=""
-              class="book-tile__cover"
-              widths={[240, 480]}
-              sizes="(min-width: 1200px) 240px, 220px"
-            />
-            <h3 class="book-tile__title">{book.title}</h3>
-            <p class="book-tile__press">{book.press}</p>
-          </a>
-        ))}
+        {books.map((book) => {
+          const href = book.data.url || '/books';
+          const external = /^https?:\/\//i.test(href);
+          return (
+            <a
+              href={href}
+              class="book-tile"
+              role="listitem"
+              {...(external
+                ? { target: '_blank', rel: 'noopener noreferrer' }
+                : {})}
+            >
+              <Image
+                src={book.data.image}
+                alt=""
+                class="book-tile__cover"
+                widths={[240, 480]}
+                sizes="(min-width: 1200px) 240px, 220px"
+              />
+              <h3 class="book-tile__title">
+                {book.data.shortTitle || book.data.title}
+              </h3>
+              <p class="book-tile__press">{book.data.press}</p>
+            </a>
+          );
+        })}
       </div>
     </section>
 
@@ -126,7 +93,7 @@ const books = [
 
     <section class="reveal">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
-        <h2 class="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--color-ink)]">
+        <h2 class="display-section text-[var(--color-ink)]">
           Recent writing
         </h2>
         <p class="text-base font-semibold text-[var(--color-mute)]">

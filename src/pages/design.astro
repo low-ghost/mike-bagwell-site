@@ -13,7 +13,7 @@ const sortedProjects = designProjects.sort((a, b) => a.data.order - b.data.order
 >
   <div class="page-shell">
     <header class="reveal mb-12">
-      <h1 class="font-display text-5xl sm:text-6xl font-extrabold tracking-tight text-[var(--color-ink)]">
+      <h1 class="font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)]">
         Design
       </h1>
       <p class="mt-4 text-xl text-[var(--color-mute)] max-w-3xl">
@@ -41,7 +41,7 @@ const sortedProjects = designProjects.sort((a, b) => a.data.order - b.data.order
                 />
               )}
             </div>
-            <h2 class="font-display text-xl font-bold tracking-tight mb-1 group-hover:underline decoration-[var(--color-accent)] decoration-2 underline-offset-4">
+            <h2 class="font-display text-2xl font-normal tracking-tight mb-1 group-hover:underline decoration-[var(--color-accent)] decoration-2 underline-offset-4">
               {project.data.title}
             </h2>
             {project.data.description && project.data.description !== project.data.title && (

@@ -1,5 +1,5 @@
 /**
- * Minimal markdown for the home bio: paragraphs, *italics*, and [links](url).
+ * Minimal markdown for the home bio: paragraphs, _italics_, and [links](url).
  * No HTML passthrough - input is escaped first.
  */
 
@@ -16,7 +16,9 @@ function isSafeHref(href: string): boolean {
 }
 
 function renderItalics(escaped: string): string {
-  return escaped.replace(/\*([^*]+)\*/g, '<em>$1</em>');
+  // Underscore italics (common after editors rewrite *em* → _em_).
+  // Single underscores in handles like low_gh0st are left alone.
+  return escaped.replace(/_([^_]+)_/g, '<em>$1</em>');
 }
 
 function renderInline(text: string): string {

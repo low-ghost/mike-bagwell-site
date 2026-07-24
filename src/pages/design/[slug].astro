@@ -64,7 +64,7 @@ const lightboxImages = await Promise.all(
 
     <article class="space-y-12">
       <header class="space-y-6 reveal">
-        <h1 class="font-display text-5xl sm:text-6xl font-extrabold tracking-tight text-[var(--color-ink)]">
+        <h1 class="font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)]">
           {title}
         </h1>
 
@@ -89,7 +89,7 @@ const lightboxImages = await Promise.all(
 
       {lightboxImages.length > 0 && (
         <section class="space-y-6 reveal">
-          <h2 class="font-display text-3xl font-bold tracking-tight text-[var(--color-ink)]">Gallery</h2>
+          <h2 class="display-section text-[var(--color-ink)]">Gallery</h2>
           <ImageLightbox client:load images={lightboxImages} />
         </section>
       )}

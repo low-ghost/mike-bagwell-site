@@ -16,6 +16,27 @@ const publications = defineCollection({
     }),
 });
 
+const books = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/books' }),
+  schema: ({ image }) =>
+    z.object({
+      title: z.string(),
+      /** Shorter label for the home shelf; falls back to title */
+      shortTitle: z.string().optional(),
+      press: z.string(),
+      /** Markdown: paragraphs, _italics_, [links](url) */
+      description: z.string(),
+      image: image(),
+      /** External purchase / info URL. Empty → shelf links to /books */
+      url: z.string().default(''),
+      linkLabel: z.string().optional(),
+      /** Release date — newest first on / and /books */
+      pubDate: z.coerce.date(),
+      /** Hide from the home page shelf (still on /books) */
+      hideFromMain: z.boolean().default(false),
+    }),
+});
+
 const design = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/design' }),
   schema: ({ image }) =>
@@ -37,4 +58,4 @@ const design = defineCollection({
     }),
 });
 
-export const collections = { publications, design };
+export const collections = { publications, books, design };

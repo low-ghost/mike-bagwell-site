@@ -66,7 +66,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
       }}
     >
       <div className="flex items-end justify-between gap-4 mb-8">
-        <h2 className="font-display text-4xl sm:text-5xl font-bold tracking-tight text-[var(--color-ink)]">
+        <h2 className="display-section text-[var(--color-ink)]">
           Featured
         </h2>
         {count > 1 && (
@@ -123,7 +123,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
               })}
             </time>
           </p>
-          <h3 className="font-display text-3xl sm:text-4xl font-bold leading-[1.15] tracking-tight mb-5 text-[var(--color-ink)] group-hover:underline decoration-[var(--color-accent)] decoration-2 underline-offset-4">
+          <h3 className="font-display text-4xl sm:text-5xl font-normal leading-[1.08] tracking-tight mb-5 text-[var(--color-ink)] group-hover:underline decoration-[var(--color-accent)] decoration-2 underline-offset-4">
             {slide.title}
           </h3>
           {slide.excerpt && (

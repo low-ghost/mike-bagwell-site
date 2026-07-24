@@ -17,14 +17,17 @@ This site showcases published poetry, prose, and publication work. It's a fully 
 ```
 /
 ├── src/
+│   ├── assets/books/           # Book cover images
 │   ├── assets/publications/    # Publication cover images
+│   ├── content/books/          # Book content (JSON) — SSOT for / and /books
 │   ├── content/publications/   # Publication content (JSON)
 │   ├── components/             # React + Astro components
 │   ├── layouts/                # Page layouts
-│   └── pages/                  # Routes (home, writing, book, design)
+│   └── pages/                  # Routes (home, writing, books, design)
 ├── scripts/
 │   ├── extract-squarespace.mjs # Pull content from Squarespace API
-│   └── add-publication.mjs     # Add new publications easily
+│   ├── add-publication.mjs     # Add new publications easily
+│   └── add-book.mjs            # Add new books easily
 ├── docs/                       # Migration & setup documentation
 └── public/                     # Static assets
 ```
@@ -47,9 +50,26 @@ npm run preview
 
 The dev server runs at `http://localhost:4321`.
 
-## Adding a Publication
+## Adding a Book
 
-Use the helper script to add a new publication:
+Books are a content collection (`src/content/books/`) — the single source of truth for both the home shelf and `/books`.
+
+```bash
+npm run book
+# or with a cover path already in hand:
+npm run book -- ~/Downloads/cover.jpg
+```
+
+You'll be prompted for title, short title, press/year, release date, markdown description, URL, link label, and whether to hide from the home shelf (`hideFromMain`).
+
+The script will:
+1. **Move** the cover into `src/assets/books/<slug>.<ext>`
+2. Create `src/content/books/<slug>.json`
+3. Print git commands to commit
+
+Books sort newest-first by `pubDate`. Set `"hideFromMain": true` to list a book on `/books` only.
+
+## Adding a Publication
 
 ```bash
 node scripts/add-publication.mjs

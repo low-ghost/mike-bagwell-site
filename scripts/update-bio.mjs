@@ -7,7 +7,7 @@
  *   node scripts/update-bio.mjs
  *   node scripts/update-bio.mjs --dry-run
  *
- * Supports: paragraphs (blank line), *italics*, [links](url)
+ * Supports: paragraphs (blank line), _italics_, [links](url)
  */
 
 import { execFileSync } from 'node:child_process';

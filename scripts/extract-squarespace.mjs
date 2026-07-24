@@ -41,6 +41,26 @@ function getExtension(url) {
   return match ? match[1] : 'jpg';
 }
 
+/** Strip Squarespace excerpt HTML into plain hover text */
+function stripExcerptHtml(raw) {
+  if (!raw) return undefined;
+  let s = String(raw);
+  s = s.replace(/<br\s*\/?>/gi, ' / ');
+  s = s.replace(/<\/(p|h[1-6]|div|li)>\s*<(p|h[1-6]|div|li)[^>]*>/gi, ' // ');
+  s = s.replace(/<[^>]+>/g, '');
+  s = s
+    .replace(/&nbsp;/g, ' ')
+    .replace(/&amp;/g, '&')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&quot;/g, '"')
+    .replace(/&#39;/g, "'")
+    .replace(/&#(\d+);/g, (_, n) => String.fromCharCode(Number(n)))
+    .replace(/&#x([0-9a-f]+);/gi, (_, h) => String.fromCharCode(parseInt(h, 16)));
+  s = s.replace(/[ \t]{2,}/g, ' ').trim();
+  return s || undefined;
+}
+
 // Fetch all publications with pagination
 async function fetchAllPublications() {
   const items = [];
@@ -146,6 +166,7 @@ async function processPublication(item, stats) {
     }
 
     // Create publication JSON
+    const excerpt = stripExcerptHtml(item.excerpt);
     const publication = {
       title: item.title || 'Untitled',
       publisher: publisher,
@@ -154,6 +175,7 @@ async function processPublication(item, stats) {
       featured: item.starred || false,
       image: imagePath,
       archivedBody: item.body || undefined,
+      ...(excerpt ? { excerpt } : {}),
     };
 
     // Write publication JSON
