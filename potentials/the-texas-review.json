@@ -5,7 +5,42 @@
   "pieces": [],
   "acceptedDate": "2025-01-23",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": null,
-  "notes": "Manual add after Blue Bag Press. Piece titles TBD during research."
+  "notes": "Vol. 45 (2025) print issue — 2 poems. Titles not listed online. Journal IG release post 2025-10-09; launch reading promo 2025-10-29.",
+  "research": {
+    "url": "https://thetexasreview.org/issues/",
+    "excerpt": "I think I look like the river. / It loves me, but I don’t love it back. / Every one of its clouds explodes inside my skin.",
+    "pubDate": "2025-10-09",
+    "coverPath": "potentials/_staging/the-texas-review/cover.png",
+    "igPosts": [
+      {
+        "shortcode": "DPmEHBzkboC",
+        "date": "2025-10-09",
+        "url": "https://www.instagram.com/p/DPmEHBzkboC/",
+        "username": null,
+        "paths": []
+      },
+      {
+        "shortcode": "DQZUHrFjkJ7",
+        "date": "2025-10-29",
+        "url": "https://www.instagram.com/p/DQZUHrFjkJ7/",
+        "username": null,
+        "paths": []
+      }
+    ],
+    "dateCandidates": [
+      "2025-10-09",
+      "2025-10-29"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "ig",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-24T19:51:02.360Z"
+  },
+  "convertedAt": "2026-07-24T19:51:02.456Z",
+  "publicationSlug": "the-texas-review"
 }

@@ -2,10 +2,32 @@
   "id": "tilt",
   "title": "TILT",
   "publisher": "TILT",
-  "pieces": [],
+  "pieces": [
+    "Impossible Systems of Thought",
+    "Part System, Part Dreaming",
+    "Poetry Is Like Dreaming"
+  ],
   "acceptedDate": "2025-01-22",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": null,
-  "notes": "Manual add after Blue Bag Press. Piece titles TBD during research."
+  "notes": "TILT 0005 (Tilted House). Visual/concrete poems. Manual add after Blue Bag Press.",
+  "research": {
+    "url": "https://www.tiltedhouse.org/tilt0005-mike-bagwell",
+    "excerpt": null,
+    "pubDate": "2025-06-17",
+    "coverPath": "potentials/_staging/tilt/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2025-06-17",
+      "2025-06-19"
+    ],
+    "sources": [
+      "web-search",
+      "page"
+    ],
+    "researchedAt": "2026-07-24T19:42:04.457Z"
+  },
+  "convertedAt": "2026-07-24T19:42:58.645Z",
+  "publicationSlug": "tilt"
 }
