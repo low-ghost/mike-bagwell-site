@@ -24,7 +24,7 @@ const books = (await getCollection('books')).sort(
     </header>
 
     <div class="space-y-24">
-      {books.map((book) => {
+      {books.map((book, i) => {
         const { title, press, description, image, url, linkLabel } = book.data;
         const descriptionHtml = renderBioMarkdown(description);
         const hasExternalUrl = /^https?:\/\//i.test(url);
@@ -42,6 +42,8 @@ const books = (await getCollection('books')).sort(
                 class="book-entry__image"
                 widths={[360, 720]}
                 sizes="(max-width: 768px) 70vw, 280px"
+                loading={i === 0 ? 'eager' : 'lazy'}
+                decoding="async"
               />
             </div>
             <div>

@@ -107,6 +107,8 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
             srcSet={slide.imageSrcSet}
             sizes={slide.imageSizes || '(max-width: 768px) 90vw, 380px'}
             alt=""
+            loading="eager"
+            decoding="async"
             className="h-full w-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.04]"
           />
         </div>

@@ -82,7 +82,8 @@ const nav = [
             <a href="/" class="site-brand shrink-0">
               Mike Bagwell
             </a>
-            <div class="flex gap-5 sm:gap-6 md:gap-8 overflow-x-auto py-1">
+
+            <div class="hidden md:flex gap-6 lg:gap-8 py-1">
               {nav.map((item) => (
                 <a
                   href={item.href}
@@ -93,9 +94,47 @@ const nav = [
                 </a>
               ))}
             </div>
+
+            <button
+              type="button"
+              class="nav-toggle md:hidden"
+              aria-expanded="false"
+              aria-controls="mobile-nav"
+              data-nav-toggle
+            >
+              <span class="sr-only">Menu</span>
+              <span class="nav-toggle__bars" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
+            </button>
           </div>
         </nav>
       </header>
+
+      <div
+        id="mobile-nav"
+        class="mobile-nav md:hidden"
+        data-mobile-nav
+        aria-hidden="true"
+      >
+        <div class="mobile-nav__panel">
+          <nav class="mobile-nav__links" aria-label="Mobile">
+            {nav.map((item, i) => (
+              <a
+                href={item.href}
+                class:list={['mobile-nav__link', item.match(path) && 'mobile-nav__link--active']}
+                aria-current={item.match(path) ? 'page' : undefined}
+                style={`--i: ${i}`}
+                data-nav-close
+              >
+                {item.label}
+              </a>
+            ))}
+          </nav>
+        </div>
+      </div>
 
       <main class="flex-1">
         <slot />
@@ -160,6 +199,8 @@ const nav = [
           nodes.forEach((el) => el.classList.add('is-visible'));
           return;
         }
+        // threshold 0: tall sections (e.g. full writing gallery) can never
+        // meet a fractional threshold when taller than the viewport.
         const io = new IntersectionObserver(
           (entries) => {
             entries.forEach((entry) => {
@@ -169,12 +210,52 @@ const nav = [
               }
             });
           },
-          { rootMargin: '0px 0px -6% 0px', threshold: 0.08 }
+          { rootMargin: '0px 0px -4% 0px', threshold: 0 }
         );
         nodes.forEach((el) => io.observe(el));
       };
+
+      const bindNav = () => {
+        const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
+        const panel = document.querySelector<HTMLElement>('[data-mobile-nav]');
+        if (!toggle || !panel || toggle.dataset.bound === '1') return;
+        toggle.dataset.bound = '1';
+
+        const setOpen = (open: boolean) => {
+          toggle.setAttribute('aria-expanded', String(open));
+          toggle.classList.toggle('is-open', open);
+          panel.classList.toggle('is-open', open);
+          panel.setAttribute('aria-hidden', String(!open));
+          document.body.classList.toggle('nav-open', open);
+          if (open) {
+            const first = panel.querySelector<HTMLAnchorElement>('.mobile-nav__link');
+            first?.focus({ preventScroll: true });
+          } else {
+            toggle.focus({ preventScroll: true });
+          }
+        };
+
+        toggle.addEventListener('click', () => {
+          setOpen(toggle.getAttribute('aria-expanded') !== 'true');
+        });
+
+        panel.querySelectorAll('[data-nav-close]').forEach((el) => {
+          el.addEventListener('click', () => setOpen(false));
+        });
+
+        document.addEventListener('keydown', (e) => {
+          if (e.key === 'Escape' && toggle.getAttribute('aria-expanded') === 'true') {
+            setOpen(false);
+          }
+        });
+      };
+
       reveal();
-      document.addEventListener('astro:page-load', reveal);
+      bindNav();
+      document.addEventListener('astro:page-load', () => {
+        reveal();
+        bindNav();
+      });
     </script>
   </body>
 </html>

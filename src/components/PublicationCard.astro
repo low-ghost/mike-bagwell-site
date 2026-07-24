@@ -11,6 +11,8 @@ export interface Props {
   image: ImageMetadata;
   excerpt?: string;
   archivedBody?: string;
+  /** Eager-load above-the-fold covers; default lazy */
+  priority?: boolean;
 }
 
 const {
@@ -21,6 +23,7 @@ const {
   image,
   excerpt,
   archivedBody,
+  priority = false,
 } = Astro.props;
 
 function normalizeUrl(url: string): string {
@@ -55,8 +58,9 @@ const mediaRatio = `${image.width} / ${image.height}`;
       fallbackFormat="jpg"
       widths={[420, 640, 900]}
       sizes="(min-width: 1100px) 24vw, (min-width: 768px) 32vw, 46vw"
-      loading="lazy"
+      loading={priority ? 'eager' : 'lazy'}
       decoding="async"
+      fetchpriority={priority ? 'high' : 'auto'}
       class="pub-card__image"
     />
     {excerpt && (

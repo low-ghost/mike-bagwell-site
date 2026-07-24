@@ -52,7 +52,7 @@ const carouselSlides = carousel
   <FeaturedCarousel client:load slides={carouselSlides} />
 ) : (
   <div class="pub-masonry" data-pub-masonry>
-    {publications.map((pub) => (
+    {publications.map((pub, i) => (
       <PublicationCard
         title={pub.data.title}
         publisher={pub.data.publisher}
@@ -61,6 +61,7 @@ const carouselSlides = carousel
         image={pub.data.image}
         excerpt={pub.data.excerpt}
         archivedBody={pub.data.archivedBody}
+        priority={i < 4}
       />
     ))}
   </div>

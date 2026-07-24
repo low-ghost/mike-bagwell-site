@@ -1,16 +1,41 @@
 {
   "id": "after-happy-hour-review",
-  "title": "3 Poems at After Happy Hour Review",
+  "title": "Taxonomy",
   "publisher": "After Happy Hour Review",
   "pieces": [
-    "A Fine Form of Mercy",
-    "Taxonomy",
-    "What is Happening Now Cannot Happen Again"
+    "Taxonomy"
   ],
   "acceptedDate": "2025-03-27",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 375,
   "venueUrl": "http://afterhappyhourreview.com",
-  "notes": "reprint"
+  "notes": "Second Chances special reprints issue (issue 26), Spring/Summer 2025. Only Taxonomy published (reprint from Toho Journal 2019). Potential had 3 titles from submission; TOC confirms Taxonomy only.",
+  "research": {
+    "url": "https://afterhappyhourreview.com/Second%20Chance%20Issue.pdf",
+    "excerpt": "What you call rain is really / a kind of roofing material / and what you call transcendence is really / the dreamless sleep of household objects.",
+    "pubDate": "2025-07-03",
+    "coverPath": "potentials/_staging/after-happy-hour-review/cover.jpg",
+    "igPosts": [
+      {
+        "shortcode": "DLpW_z3sjfQ",
+        "date": "2025-07-03",
+        "url": "https://www.instagram.com/p/DLpW_z3sjfQ/",
+        "username": null,
+        "paths": []
+      }
+    ],
+    "dateCandidates": [
+      "2025-07-03"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "ig",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-24T22:51:28.689Z"
+  },
+  "convertedAt": "2026-07-24T22:52:41.140Z",
+  "publicationSlug": "after-happy-hour-review"
 }

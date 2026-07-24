@@ -1,6 +1,6 @@
 {
   "id": "petrichor",
-  "title": "Orbit and Space at Petrichor",
+  "title": "Orbit and Space",
   "publisher": "Petrichor",
   "pieces": [
     "Orbit",
@@ -8,6 +8,24 @@
   ],
   "acceptedDate": "2025-03-01",
   "published": true,
-  "status": "pending",
-  "submissionId": 340
+  "status": "converted",
+  "submissionId": 340,
+  "research": {
+    "url": "https://petrichormag.com/28-mike-bagwell/",
+    "excerpt": "something falls / a draught of days / we form a singular / thought / expose it to breath / I should have felt less",
+    "pubDate": "2025-09-30",
+    "coverPath": "potentials/_staging/petrichor/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2025-09-30"
+    ],
+    "sources": [
+      "web-search",
+      "page"
+    ],
+    "researchedAt": "2026-07-24T20:27:47.371Z"
+  },
+  "notes": "Petrichor #28 (Fall 2025). Visual poems Orbit & Space. Issue index WP date 2025-09-30.",
+  "convertedAt": "2026-07-24T20:28:21.828Z",
+  "publicationSlug": "petrichor"
 }
