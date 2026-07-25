@@ -2,6 +2,9 @@
 /**
  * Kinetic headline — chars/words split for GSAP.
  * Visual spans are aria-hidden; accessible name stays on the heading.
+ *
+ * Char mode still animates per glyph, but letters are wrapped in nowrap
+ * word groups so line breaks never land mid-word (e.g. "Mike B" / "agwell").
  */
 export interface Props {
   text: string;
@@ -23,10 +26,8 @@ const {
   scramble = false,
 } = Astro.props;
 
-const units: string[] =
-  mode === 'words'
-    ? text.split(/(\s+)/).filter((p: string) => p.length > 0)
-    : Array.from(text);
+/** Tokens: words and whitespace runs preserved for wrapping control */
+const tokens = text.split(/(\s+)/).filter((p: string) => p.length > 0);
 
 let unitIndex = 0;
 ---
@@ -40,25 +41,38 @@ let unitIndex = 0;
 >
   <span class="kinetic__visual" aria-hidden="true">
     {
-      units.map((unit: string) => {
-        if (/^\s+$/.test(unit) || unit === ' ') {
+      tokens.map((token: string) => {
+        if (/^\s+$/.test(token)) {
           return <span class="kinetic__space">&nbsp;</span>;
         }
-        const i = unitIndex++;
+
         if (mode === 'words') {
+          const i = unitIndex++;
           return (
             <span class="kinetic__word" style={`--i: ${i}`}>
-              <span class="kinetic__inner" data-text={unit}>
-                {unit}
+              <span class="kinetic__inner" data-text={token}>
+                {token}
               </span>
             </span>
           );
         }
+
+        // chars: keep the word on one line; animate glyphs inside
+        const chars = Array.from(token);
         return (
-          <span class="kinetic__char" style={`--i: ${i}`}>
-            <span class="kinetic__inner" data-char={unit} data-text={unit}>
-              {unit}
-            </span>
+          <span class="kinetic__word-group">
+            {
+              chars.map((ch: string) => {
+                const i = unitIndex++;
+                return (
+                  <span class="kinetic__char" style={`--i: ${i}`}>
+                    <span class="kinetic__inner" data-char={ch} data-text={ch}>
+                      {ch}
+                    </span>
+                  </span>
+                );
+              })
+            }
           </span>
         );
       })

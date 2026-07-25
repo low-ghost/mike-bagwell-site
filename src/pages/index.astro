@@ -164,7 +164,8 @@ const notableBookEntries = await Promise.all(
           class="kinetic--section display-section text-[var(--color-ink)]"
         />
         <p class="text-base font-semibold text-[var(--color-mute)] stagger-child">
-          Hover a cover to peek at the poem
+          <span class="hidden md:inline">Hover a cover to peek at the poem</span>
+          <span class="md:hidden">Scroll to peek · tap to open</span>
         </p>
       </div>
       <Gallery limit={12} />

@@ -261,6 +261,7 @@
     text-decoration: none;
     padding-block: 0.1em;
     overflow: visible;
+    white-space: nowrap;
   }
 
   .site-brand:hover {
@@ -875,7 +876,34 @@
     transform: none;
   }
 
-  @media (hover: hover) and (pointer: fine) {
+  /* Mobile: excerpt reveal scrubbed by scroll distance to focus line
+     (--excerpt-progress set in site-motion; no timed CSS transition) */
+  @media (max-width: 767px) {
+    .pub-card__excerpt {
+      padding: 0.85rem 0.75rem 0.95rem;
+      opacity: var(--excerpt-progress, 0);
+      transform: translateY(calc((1 - var(--excerpt-progress, 0)) * 12px));
+      transition: none;
+    }
+
+    .pub-card__excerpt p {
+      font-size: 0.8rem;
+      line-height: 1.4;
+      -webkit-line-clamp: 5;
+    }
+
+    .pub-card__image {
+      transition: none;
+      transform: scale(calc(1 + var(--excerpt-progress, 0) * 0.03));
+      filter:
+        brightness(calc(1 - var(--excerpt-progress, 0) * 0.78))
+        contrast(calc(1 + var(--excerpt-progress, 0) * 0.05))
+        saturate(calc(1 - var(--excerpt-progress, 0) * 0.3));
+    }
+  }
+
+  /* md+ / fine pointer: original hover peek */
+  @media (hover: hover) and (pointer: fine) and (min-width: 768px) {
     .pub-card:hover .pub-card__image {
       transform: scale(1.05);
       filter: brightness(0.22) contrast(1.05) saturate(0.7);
@@ -1347,6 +1375,12 @@
 
   .kinetic__visual {
     display: inline;
+  }
+
+  /* Keep glyph spans from wrapping mid-word (Mike B / agwell) */
+  .kinetic__word-group {
+    display: inline-block;
+    white-space: nowrap;
   }
 
   .kinetic__char,

@@ -9,6 +9,7 @@ const SCRAMBLE =
 let ctx: gsap.Context | null = null;
 let masonryLayoutHandler: ((e: Event) => void) | null = null;
 let safetyTimer = 0;
+let excerptFocusCleanup: (() => void) | null = null;
 
 function prefersReducedMotion(): boolean {
   return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -236,11 +237,170 @@ function revealSection(section: HTMLElement) {
   }
 }
 
+/** Smoothstep 0→1 for scroll-scrubbed excerpt progress */
+function smoothstep(t: number): number {
+  const x = Math.min(1, Math.max(0, t));
+  return x * x * (3 - 2 * x);
+}
+
+function bindMobileExcerptFocus() {
+  excerptFocusCleanup?.();
+  excerptFocusCleanup = null;
+
+  const mq = window.matchMedia('(max-width: 767px)');
+  if (!mq.matches) return;
+
+  /** Displayed progress (lerped) vs scroll target — lag = slower reveal */
+  const display = new Map<HTMLElement, number>();
+  let raf = 0;
+  let running = false;
+
+  const cardsWithExcerpt = () =>
+    Array.from(document.querySelectorAll<HTMLElement>('.pub-card')).filter((c) =>
+      c.querySelector('.pub-card__excerpt')
+    );
+
+  const clearProgress = (card: HTMLElement) => {
+    card.style.removeProperty('--excerpt-progress');
+    card.classList.remove('is-excerpt-active');
+    display.delete(card);
+  };
+
+  const clearAll = () => {
+    cardsWithExcerpt().forEach(clearProgress);
+    display.clear();
+  };
+
+  const computeTargets = (): Map<HTMLElement, number> => {
+    const targets = new Map<HTMLElement, number>();
+    if (!mq.matches) return targets;
+
+    const vh = window.innerHeight;
+    const vw = window.innerWidth;
+    const focusY = vh * 0.42;
+    // Extra-wide band: long scroll distance to fully reveal
+    const band = vh * 0.72;
+    const focusX = vw * 0.5;
+
+    let best: HTMLElement | null = null;
+    let bestDistY = Infinity;
+    let bestKey = Infinity;
+
+    for (const card of cardsWithExcerpt()) {
+      const media = card.querySelector<HTMLElement>('.pub-card__media') || card;
+      const r = media.getBoundingClientRect();
+      if (r.bottom < -vh * 0.15 || r.top > vh * 1.15) continue;
+      const midY = (r.top + r.bottom) / 2;
+      const midX = (r.left + r.right) / 2;
+      const distY = Math.abs(midY - focusY);
+      const distX = Math.abs(midX - focusX);
+      const key = distY * 1000 + distX;
+      if (key < bestKey) {
+        bestKey = key;
+        bestDistY = distY;
+        best = card;
+      }
+    }
+
+    if (best && bestDistY <= band) {
+      const linear = 1 - bestDistY / band;
+      // Soft early ramp — full opacity only when very near center
+      targets.set(best, Math.pow(smoothstep(linear), 2.1));
+    }
+
+    return targets;
+  };
+
+  const applyProgress = (card: HTMLElement, progress: number) => {
+    if (progress < 0.004) {
+      clearProgress(card);
+      return;
+    }
+    card.style.setProperty('--excerpt-progress', progress.toFixed(4));
+    card.classList.toggle('is-excerpt-active', progress > 0.1);
+    display.set(card, progress);
+  };
+
+  const tick = () => {
+    raf = 0;
+    if (!mq.matches) {
+      clearAll();
+      running = false;
+      return;
+    }
+
+    const targets = computeTargets();
+    // Very slow chase (~0.5s+ to settle after scroll stops)
+    const lerp = prefersReducedMotion() ? 1 : 0.032;
+    let needsMore = false;
+    const seen = new Set<HTMLElement>();
+
+    targets.forEach((tgt, card) => {
+      seen.add(card);
+      const cur = display.get(card) ?? 0;
+      const next = cur + (tgt - cur) * lerp;
+      if (Math.abs(tgt - next) > 0.004) needsMore = true;
+      applyProgress(card, Math.abs(tgt - next) <= 0.004 ? tgt : next);
+    });
+
+    display.forEach((cur, card) => {
+      if (seen.has(card)) return;
+      const next = cur + (0 - cur) * lerp;
+      if (next > 0.004) {
+        needsMore = true;
+        applyProgress(card, next);
+      } else {
+        clearProgress(card);
+      }
+    });
+
+    if (needsMore) {
+      raf = requestAnimationFrame(tick);
+    } else {
+      running = false;
+    }
+  };
+
+  const kick = () => {
+    if (running) return;
+    running = true;
+    raf = requestAnimationFrame(tick);
+  };
+
+  const onMq = () => {
+    if (!mq.matches) {
+      clearAll();
+      running = false;
+      if (raf) cancelAnimationFrame(raf);
+      raf = 0;
+    } else {
+      kick();
+    }
+  };
+
+  window.addEventListener('scroll', kick, { passive: true });
+  window.addEventListener('resize', kick, { passive: true });
+  mq.addEventListener('change', onMq);
+  kick();
+
+  excerptFocusCleanup = () => {
+    window.removeEventListener('scroll', kick);
+    window.removeEventListener('resize', kick);
+    mq.removeEventListener('change', onMq);
+    if (raf) cancelAnimationFrame(raf);
+    raf = 0;
+    running = false;
+    clearAll();
+  };
+}
+
 export function teardownSiteMotion() {
   if (safetyTimer) {
     window.clearTimeout(safetyTimer);
     safetyTimer = 0;
   }
+  excerptFocusCleanup?.();
+  excerptFocusCleanup = null;
   ctx?.revert();
   ctx = null;
   ScrollTrigger.getAll().forEach((t) => t.kill());
@@ -264,6 +424,7 @@ export function initSiteMotion() {
 
   if (prefersReducedMotion()) {
     showAllContent();
+    bindMobileExcerptFocus();
     return;
   }
 
@@ -428,7 +589,10 @@ export function initSiteMotion() {
         settlePubCard(el);
       });
     }, 2000);
+
+    bindMobileExcerptFocus();
   } catch {
     showAllContent();
+    bindMobileExcerptFocus();
   }
 }
