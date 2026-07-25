@@ -3,7 +3,7 @@ import Base from '../layouts/Base.astro';
 import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { renderBioMarkdown } from '../lib/bio-markdown';
-import { bookListSchema, collectionPageSchema } from '../lib/seo-schema';
+import { bookListSchema, BOOK_WIKIDATA, collectionPageSchema } from '../lib/seo-schema';
 
 const books = (await getCollection('books')).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
@@ -28,6 +28,7 @@ const schemaBooks = await Promise.all(
       pubDate: book.data.pubDate,
       url: href && /^https?:\/\//i.test(href) ? href : undefined,
       image: new URL(optimized.src, Astro.site).href,
+      sameAs: BOOK_WIKIDATA[book.data.title],
     };
   })
 );

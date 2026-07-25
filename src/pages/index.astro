@@ -1,12 +1,16 @@
 ---
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import portrait from '../assets/author/portrait.jpg';
 import Gallery from '../components/Gallery.astro';
 import bioMarkdown from '../content/bio.md?raw';
 import Base from '../layouts/Base.astro';
 import { renderBioMarkdown } from '../lib/bio-markdown';
-import { profilePageSchema } from '../lib/seo-schema';
+import {
+  BOOK_WIKIDATA,
+  bookSchema,
+  profilePageSchema,
+} from '../lib/seo-schema';
 
 const bioHtml = renderBioMarkdown(bioMarkdown);
 
@@ -17,11 +21,35 @@ const featuredPublications = (await getCollection('publications'))
 const books = (await getCollection('books'))
   .filter((b) => !b.data.hideFromMain)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const notableBookEntries = await Promise.all(
+  books
+    .filter((b) => BOOK_WIKIDATA[b.data.title])
+    .map(async (book) => {
+      const optimized = await getImage({
+        src: book.data.image,
+        width: 800,
+        format: 'jpg',
+      });
+      const href = book.data.url?.trim();
+      return bookSchema({
+        title: book.data.title,
+        press: book.data.press,
+        pubDate: book.data.pubDate,
+        url: href && /^https?:\/\//i.test(href) ? href : undefined,
+        image: new URL(optimized.src, Astro.site).href,
+        sameAs: BOOK_WIKIDATA[book.data.title],
+      });
+    })
+);
 ---
 
 <Base
   type="profile"
-  schema={[profilePageSchema('https://mikebagwell.me/')]}
+  schema={[
+    profilePageSchema('https://mikebagwell.me/'),
+    ...notableBookEntries,
+  ]}
 >
   <div class="page-shell">
     <section class="reveal grid lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-14 items-start mb-20 lg:mb-28">

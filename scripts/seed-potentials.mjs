@@ -89,20 +89,6 @@ const potentials = [
 
   // --- books already on site (skip journal conversion) ---
   {
-    id: 'moonstone-sense-organs',
-    title: 'Sense Organs',
-    publisher: 'Moonstone',
-    pieces: ['Sense Organs'],
-    pieceType: 'chapbook',
-    acceptedDate: '2026-03-01',
-    published: true,
-    status: 'skipped',
-    kind: 'book',
-    submissionId: 414,
-    venueUrl: 'http://www.moonstoneartscenter.com',
-    skipReason: 'Chapbook — track under books collection, not journal potentials.',
-  },
-  {
     id: 'thirty-west-swords-and-the-devil',
     title: 'Poem of Thanks: Swords and The Devil',
     publisher: 'Thirty West Publishing House',

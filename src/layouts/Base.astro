@@ -1,6 +1,11 @@
 ---
 import Seo from '../components/Seo.astro';
-import { jsonLdGraph, personSchema, websiteSchema } from '../lib/seo-schema';
+import {
+  jsonLdGraph,
+  personSchema,
+  websiteSchema,
+  SAME_AS,
+} from '../lib/seo-schema';
 import '../styles/global.css';
 
 export interface Props {
@@ -51,6 +56,7 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
       publishedTime={publishedTime}
       noindex={noindex}
     />
+    {SAME_AS.map((href) => <link rel="me" href={href} />)}
     <link
       rel="preload"
       href="/fonts/trap/Trap-ExtraBold.woff2"

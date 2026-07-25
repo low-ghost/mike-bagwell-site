@@ -9,7 +9,25 @@
   ],
   "acceptedDate": "2025-11-29",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 351,
-  "venueUrl": "http://theboilerjournal.com"
+  "venueUrl": "http://theboilerjournal.com",
+  "research": {
+    "url": "https://theboilerjournal.com/mike-bagwell/",
+    "excerpt": "when I open my eyes the world / makes small adjustments / like everyone is suddenly not / wearing a tuxedo // they are tearing a hole / in the center of the road / digging furiously with shovels / and bulldozers",
+    "pubDate": "2026-04-16",
+    "coverPath": "potentials/_staging/the-boiler/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-04-16"
+    ],
+    "sources": [
+      "web-search",
+      "page"
+    ],
+    "researchedAt": "2026-07-25T00:08:37.890Z"
+  },
+  "notes": "All 3 accepted poems online: Purity of Heart, Skypenis in the UK, Trying. Cover = article screenshot (no featured image). IG scrape not run / no post found.",
+  "convertedAt": "2026-07-25T00:11:35.603Z",
+  "publicationSlug": "the-boiler"
 }

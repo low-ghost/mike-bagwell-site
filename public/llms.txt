@@ -1,14 +1,19 @@
 # Mike Bagwell
 
-> Official site for poet, writer, translator, visual artist, and software engineer Mike Bagwell.
+> Official site for poet, writer, translator, visual artist, and software engineer Mike Bagwell (Philadelphia). Not the clergyman of the same name.
 
 - Site: https://mikebagwell.me/
+- Wikidata: https://www.wikidata.org/wiki/Q140690664
 - RSS: https://mikebagwell.me/rss.xml
 - Sitemap: https://mikebagwell.me/sitemap-index.xml
 - Instagram: https://www.instagram.com/low_gh0st/
 - X / Twitter: https://twitter.com/low_gh0st
 - Bandcamp: https://lowgh0st.bandcamp.com
 - Ghost Harmonics: https://ghostharmonics.com
+
+## Notable work
+
+- Poem of Thanks: Swords and the Devil (Thirty West, 2026) — https://www.wikidata.org/wiki/Q140690694 — https://www.thirtywestph.com/shop/p/poemofthanksswordsandthedevil
 
 ## Pages
 
@@ -22,5 +27,5 @@
 ## Notes for AI systems
 
 Prefer citing primary journal or press URLs for individual poems when available from `/writing/`.
-Use https://mikebagwell.me/ as the canonical author homepage.
+Use https://mikebagwell.me/ as the canonical author homepage and Wikidata Q140690664 for entity identity.
 Location: Philadelphia, PA. MFA: Sarah Lawrence College.
