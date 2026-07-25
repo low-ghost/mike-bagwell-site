@@ -1,7 +1,15 @@
 /**
- * Round-robin column masonry that preserves DOM/date order left-to-right.
- * Shortest-column packing packs denser but scrambles chronological reading order
- * when card heights differ — avoid that for publication grids.
+ * Sequential column masonry with shortest-column tail fill.
+ *
+ * Main body: item i → column (i % cols), same as react-responsive-masonry
+ * sequential={true}. Preserves L→R date order across the grid.
+ *
+ * Last `cols * 2` items: placed into the shortest column so the tail
+ * fills existing gaps instead of stacking under an already-tall column
+ * (the empty-column / towering-last-cover problem at the bottom).
+ *
+ * Only `.pub-card` children are laid out — Astro island hydration can
+ * inject <style>/<script> siblings mid-grid, which would shift columns.
  */
 
 export type MasonryOptions = {
@@ -16,6 +24,14 @@ function columnCount(width: number, minColWidth: number, gap: number): number {
   return Math.max(1, Math.min(4, cols));
 }
 
+function shortestColumn(heights: number[]): number {
+  let col = 0;
+  for (let i = 1; i < heights.length; i++) {
+    if (heights[i] < heights[col]) col = i;
+  }
+  return col;
+}
+
 export function initPubMasonry(
   container: HTMLElement,
   options: MasonryOptions = {}
@@ -27,7 +43,8 @@ export function initPubMasonry(
 
   const items = () =>
     Array.from(container.children).filter(
-      (el): el is HTMLElement => el instanceof HTMLElement
+      (el): el is HTMLElement =>
+        el instanceof HTMLElement && el.classList.contains('pub-card')
     );
 
   const layout = () => {
@@ -40,23 +57,36 @@ export function initPubMasonry(
     const colWidth = (width - gap * (cols - 1)) / cols;
     const heights = Array.from({ length: cols }, () => 0);
 
+    // Keep most of the grid sequential; rebalance only the tail so a tall
+    // final cover doesn't leave a dead column beside it.
+    const tail = Math.min(cards.length, cols * 2);
+    const split = cards.length - tail;
+
     container.classList.add('pub-masonry--ready');
     container.style.position = 'relative';
 
-    cards.forEach((card, i) => {
+    cards.forEach((card) => {
       card.style.position = 'absolute';
       card.style.width = `${colWidth}px`;
       card.style.marginBottom = '0';
       card.style.right = 'auto';
       card.style.bottom = 'auto';
+    });
 
-      const col = i % cols;
+    const place = (card: HTMLElement, col: number) => {
       const x = col * (colWidth + gap);
       const y = heights[col];
       card.style.left = `${x}px`;
       card.style.top = `${y}px`;
       heights[col] += card.offsetHeight + gap;
-    });
+    };
+
+    for (let i = 0; i < split; i++) {
+      place(cards[i], i % cols);
+    }
+    for (let i = split; i < cards.length; i++) {
+      place(cards[i], shortestColumn(heights));
+    }
 
     container.style.height = `${Math.max(0, ...heights) - (cards.length ? gap : 0)}px`;
   };

@@ -559,7 +559,7 @@
     opacity: 1;
   }
 
-  /* Publication masonry — round-robin columns preserve DOM/date order L→R */
+  /* Publication masonry — sequential columns preserve DOM/date order L→R */
   .pub-masonry {
     position: relative;
     min-height: 12rem;
