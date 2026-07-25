@@ -10,6 +10,9 @@
  *
  * Only `.pub-card` children are laid out — Astro island hydration can
  * inject <style>/<script> siblings mid-grid, which would shift columns.
+ *
+ * Mobile (<768): always 2-up with %-based widths so columns always fit
+ * the live container / device width (orientation, dynamic toolbars, etc.).
  */
 
 export type MasonryOptions = {
@@ -34,6 +37,13 @@ function shortestColumn(heights: number[]): number {
   return col;
 }
 
+/** Floor to whole CSS pixels to avoid subpixel horizontal overflow. */
+function measureWidth(container: HTMLElement): number {
+  const rect = container.getBoundingClientRect().width;
+  // Prefer layout width; fall back to rect when clientWidth is 0 (hidden/first paint)
+  return Math.max(0, Math.floor(container.clientWidth || rect));
+}
+
 export function initPubMasonry(
   container: HTMLElement,
   options: MasonryOptions = {}
@@ -54,10 +64,16 @@ export function initPubMasonry(
     const cards = items();
     if (cards.length === 0) return;
 
-    const width = container.clientWidth;
+    const width = measureWidth(container);
+    if (width <= 0) {
+      // Wait for a real size (flex/grid parent still settling)
+      schedule();
+      return;
+    }
+
+    const isMobile = width < 768;
     const cols = columnCount(width, minColWidth, gap);
-    const useGap = width < 768 ? Math.min(gap, 16) : gap;
-    const colWidth = (width - useGap * (cols - 1)) / cols;
+    const useGap = isMobile ? Math.min(gap, 12) : gap;
     const heights = Array.from({ length: cols }, () => 0);
 
     // Keep most of the grid sequential; rebalance only the tail so a tall
@@ -67,24 +83,45 @@ export function initPubMasonry(
 
     container.classList.add('pub-masonry--ready');
     container.style.position = 'relative';
+    container.style.width = '100%';
+    container.style.maxWidth = '100%';
+
+    const totalGap = useGap * (cols - 1);
+
+    // Mobile: %-based tracks always match the container as it resizes.
+    // Desktop: floored px columns for precise multi-col packing.
+    const mobileColWidth = `calc((100% - ${totalGap}px) / ${cols})`;
+    const desktopColWidth = Math.floor((width - totalGap) / cols);
 
     cards.forEach((card) => {
       card.style.position = 'absolute';
-      card.style.width = `${colWidth}px`;
       card.style.marginBottom = '0';
       card.style.right = 'auto';
       card.style.bottom = 'auto';
+      card.style.boxSizing = 'border-box';
+      card.style.maxWidth = '100%';
+      if (isMobile) {
+        card.style.width = mobileColWidth;
+      } else {
+        card.style.width = `${desktopColWidth}px`;
+      }
     });
 
     const place = (card: HTMLElement, col: number) => {
-      const x = col * (colWidth + useGap);
-      const y = heights[col];
-      card.style.left = `${x}px`;
-      card.style.top = `${y}px`;
+      if (isMobile) {
+        // left = col * (colWidth + gap) expressed in calc so it tracks 100%
+        card.style.left =
+          col === 0
+            ? '0px'
+            : `calc(((100% - ${totalGap}px) / ${cols} + ${useGap}px) * ${col})`;
+      } else {
+        card.style.left = `${col * (desktopColWidth + useGap)}px`;
+      }
+      card.style.top = `${heights[col]}px`;
       card.style.setProperty('--masonry-col', String(col));
       card.style.setProperty(
         '--masonry-enter-rot',
-        col % 2 === 0 ? '-2.2deg' : '2.2deg'
+        isMobile ? (col % 2 === 0 ? '-1.2deg' : '1.2deg') : col % 2 === 0 ? '-2.2deg' : '2.2deg'
       );
       card.dataset.masonryCol = String(col);
       heights[col] += card.offsetHeight + useGap;
@@ -121,6 +158,12 @@ export function initPubMasonry(
   const ro = new ResizeObserver(() => schedule());
   ro.observe(container);
 
+  // iOS dynamic toolbars / orientation: keep columns fitted to the live viewport
+  const onViewport = () => schedule();
+  window.visualViewport?.addEventListener('resize', onViewport);
+  window.visualViewport?.addEventListener('scroll', onViewport);
+  window.addEventListener('orientationchange', onViewport);
+
   schedule();
 
   // Always paint eventually — never leave the grid invisible if layout stalls
@@ -132,6 +175,9 @@ export function initPubMasonry(
     disposed = true;
     cancelAnimationFrame(frame);
     ro.disconnect();
+    window.visualViewport?.removeEventListener('resize', onViewport);
+    window.visualViewport?.removeEventListener('scroll', onViewport);
+    window.removeEventListener('orientationchange', onViewport);
     images.forEach((img) => {
       img.removeEventListener('load', onImg);
       img.removeEventListener('error', onImg);

@@ -717,6 +717,24 @@
   .pub-masonry {
     position: relative;
     min-height: 12rem;
+    width: 100%;
+    max-width: 100%;
+  }
+
+  @media (max-width: 767px) {
+    /* Contain enter-transform spill so columns never cause horizontal scroll */
+    .pub-masonry {
+      overflow-x: clip;
+    }
+
+    .page-shell {
+      overflow-x: clip;
+    }
+
+    .pub-masonry--ready > .pub-card {
+      max-width: 100%;
+      box-sizing: border-box;
+    }
   }
 
   /*
