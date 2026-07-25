@@ -7,7 +7,23 @@
   ],
   "acceptedDate": "2025-12-24",
   "published": true,
-  "status": "pending",
+  "status": "researched",
   "submissionId": 512,
-  "notes": "From Dusie/Rob McLennan packet (acceptedDate). Notes say published as Tuesday Poem ~June 23 — use research.pubDate for that."
+  "notes": "From Dusie/Rob McLennan packet (acceptedDate). Notes say published as Tuesday Poem ~June 23 — use research.pubDate for that. Cover = article screenshot (og:image was unrelated profile photo). IG blocked.",
+  "research": {
+    "url": "https://dusie.blogspot.com/2026/06/tuesday-poem-690-mike-bagwell-fathers.html",
+    "excerpt": "The other of the other / is the sky and its sphere / of longing. // Kolaptō grew in reverse, / roamed dung-billed instead / of bildungsromaned, / raised in a house / with all its mirrors pointed inward / to reflect only their dark walls.",
+    "pubDate": "2026-06-23",
+    "coverPath": "potentials/_staging/tuesday-poem-fathers-day/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-06-23"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T01:06:38.840Z"
+  }
 }

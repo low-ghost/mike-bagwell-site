@@ -8,7 +8,25 @@
   ],
   "acceptedDate": "2025-12-18",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 490,
-  "notes": "brand new, cool site. 2/2 zine"
+  "notes": "brand new, cool site. 2/2 zine Cover = site logo (no piece image). IG scrape blocked.",
+  "research": {
+    "url": "https://ritualdagger.neocities.org/zineposts/mike-bagwell-feb-2-2026.html",
+    "excerpt": "The distance between the mirror / and myself is a cloud of clouds. // But nothing raining today, / just my reflections / shooting each other / with dream bullets / around crowded corners.",
+    "pubDate": "2026-02-02",
+    "coverPath": "potentials/_staging/ritual-dagger/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-02-02"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T00:46:04.897Z"
+  },
+  "convertedAt": "2026-07-25T00:49:02.219Z",
+  "publicationSlug": "ritual-dagger"
 }

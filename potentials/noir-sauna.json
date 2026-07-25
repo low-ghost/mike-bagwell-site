@@ -8,7 +8,36 @@
   "pieceType": "micro",
   "acceptedDate": "2025-12-05",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 435,
-  "notes": "DB venue was Afternoon Visitor; published at Noir Sauna (had to pull Afternoon Visitor)."
+  "notes": "DB venue was Afternoon Visitor; published at Noir Sauna (had to pull Afternoon Visitor). pubDate from Squarespace item.publishOn; cover from user-supplied IG post DV58KtZDX25.",
+  "research": {
+    "url": "https://www.noir-sauna.org/eight/mike-bagwell",
+    "excerpt": "with one face I am prepared / for anything / light finds me / on my own terms / the way I want to be found / a trumpet blows / I rise from the dead / my bones coming together",
+    "pubDate": "2026-01-30",
+    "coverPath": "potentials/_staging/noir-sauna/cover.jpg",
+    "igPosts": [
+      {
+        "shortcode": "DV58KtZDX25",
+        "date": "2026-03-15",
+        "url": "https://www.instagram.com/p/DV58KtZDX25/",
+        "paths": [
+          "potentials/_staging/noir-sauna/ig/DV58KtZDX25.jpg"
+        ]
+      }
+    ],
+    "dateCandidates": [
+      "2026-01-30",
+      "2026-03-15"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt",
+      "ig"
+    ],
+    "researchedAt": "2026-07-25T00:43:51.868Z"
+  },
+  "convertedAt": "2026-07-25T00:44:07.657Z",
+  "publicationSlug": "noir-sauna"
 }

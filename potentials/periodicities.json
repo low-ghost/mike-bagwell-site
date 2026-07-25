@@ -10,7 +10,25 @@
   ],
   "acceptedDate": "2025-12-24",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 512,
-  "notes": "From Dusie packet (same acceptance). Notes say Periodicities in Feb — use research.pubDate. Distinct from Tuesday Poem."
+  "notes": "From Dusie packet (same acceptance). Notes say Periodicities in Feb — use research.pubDate. Distinct from Tuesday Poem. Cover = article screenshot (og:image was unrelated profile photo). IG blocked.",
+  "research": {
+    "url": "https://periodicityjournal.blogspot.com/2026/02/mike-bagwell-four-poems.html",
+    "excerpt": "Kid Cumulus forgets his name / and goes hunting for it / in the forest of proper nouns, / cutting his own trail, / cutting his friends in half / to peer through the telescope / of their intestines / to climb the rungs of their sex / into the dripping moon.",
+    "pubDate": "2026-02-01",
+    "coverPath": "potentials/_staging/periodicities/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-02-01"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T00:54:45.362Z"
+  },
+  "convertedAt": "2026-07-25T00:54:45.399Z",
+  "publicationSlug": "periodicities"
 }
