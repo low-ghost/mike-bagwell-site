@@ -79,7 +79,7 @@ const carouselSlides = carousel
       });
     }
 
+    // Static pages: script runs once per full load (no view-transition re-bind)
     bind();
-    document.addEventListener('astro:page-load', bind);
   </script>
 )}

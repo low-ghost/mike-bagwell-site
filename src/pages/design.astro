@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import KineticText from '../components/KineticText.astro';
 import { Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { collectionPageSchema } from '../lib/seo-schema';
@@ -19,10 +20,15 @@ const description =
   schema={[collectionPageSchema({ url: pageUrl, name: title, description })]}
 >
   <div class="page-shell">
-    <header class="reveal mb-12">
-      <h1 class="font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)]">
-        Design
-      </h1>
+    <header class="mb-12">
+      <KineticText
+        text="Design"
+        as="h1"
+        mode="chars"
+        when="load"
+        scramble
+        class="kinetic--hero font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)]"
+      />
       <p class="mt-4 text-xl text-[var(--color-mute)] max-w-3xl">
         Publication design, print objects, and collaborative book work.
       </p>

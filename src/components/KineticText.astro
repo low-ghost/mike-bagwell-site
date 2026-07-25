@@ -1,0 +1,67 @@
+---
+/**
+ * Kinetic headline — chars/words split for GSAP.
+ * Visual spans are aria-hidden; accessible name stays on the heading.
+ */
+export interface Props {
+  text: string;
+  as?: 'h1' | 'h2' | 'h3' | 'p' | 'span';
+  class?: string;
+  mode?: 'chars' | 'words';
+  /** Play entrance on scroll (default) or immediately on load */
+  when?: 'load' | 'scroll';
+  /** Optional hover scramble (display titles only) */
+  scramble?: boolean;
+}
+
+const {
+  text,
+  as: Tag = 'h1',
+  class: className = '',
+  mode = 'chars',
+  when = 'scroll',
+  scramble = false,
+} = Astro.props;
+
+const units: string[] =
+  mode === 'words'
+    ? text.split(/(\s+)/).filter((p: string) => p.length > 0)
+    : Array.from(text);
+
+let unitIndex = 0;
+---
+
+<Tag
+  class:list={['kinetic', className]}
+  data-kinetic={mode}
+  data-kinetic-when={when}
+  data-scramble={scramble ? 'true' : undefined}
+  aria-label={text}
+>
+  <span class="kinetic__visual" aria-hidden="true">
+    {
+      units.map((unit: string) => {
+        if (/^\s+$/.test(unit) || unit === ' ') {
+          return <span class="kinetic__space">&nbsp;</span>;
+        }
+        const i = unitIndex++;
+        if (mode === 'words') {
+          return (
+            <span class="kinetic__word" style={`--i: ${i}`}>
+              <span class="kinetic__inner" data-text={unit}>
+                {unit}
+              </span>
+            </span>
+          );
+        }
+        return (
+          <span class="kinetic__char" style={`--i: ${i}`}>
+            <span class="kinetic__inner" data-char={unit} data-text={unit}>
+              {unit}
+            </span>
+          </span>
+        );
+      })
+    }
+  </span>
+</Tag>

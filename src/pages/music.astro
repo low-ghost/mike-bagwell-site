@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import KineticText from '../components/KineticText.astro';
 import { collectionPageSchema } from '../lib/seo-schema';
 
 const tracks = [
@@ -32,10 +33,15 @@ const description =
   schema={[collectionPageSchema({ url: pageUrl, name: title, description })]}
 >
   <div class="page-shell">
-    <header class="reveal mb-12">
-      <h1 class="font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-4">
-        Just a bit of noise
-      </h1>
+    <header class="mb-12">
+      <KineticText
+        text="Just a bit of noise"
+        as="h1"
+        mode="chars"
+        when="load"
+        scramble
+        class="kinetic--hero font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-4"
+      />
       <p class="text-xl text-[var(--color-mute)] max-w-3xl">
         Tracks from <a class="font-semibold text-[var(--color-accent-deep)] underline underline-offset-4 hover:text-[var(--color-accent)]" href="https://lowgh0st.bandcamp.com" target="_blank" rel="noopener noreferrer">lowgh0st.bandcamp.com</a>.
       </p>

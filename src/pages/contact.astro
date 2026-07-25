@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import KineticText from '../components/KineticText.astro';
 
 // Web3Forms access key should be set as environment variable
 const accessKey = import.meta.env.WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE';
@@ -13,9 +14,14 @@ const isSuccess = Astro.url.searchParams.get('success') === 'true';
 >
   <div class="page-shell">
     <div class="max-w-2xl">
-    <h1 class="reveal font-display text-[clamp(4.5rem,10vw,6.5rem)] font-extrabold leading-[0.95] mb-8 tracking-tight text-[var(--color-ink)]">
-      Contact
-    </h1>
+    <KineticText
+      text="Contact"
+      as="h1"
+      mode="chars"
+      when="load"
+      scramble
+      class="kinetic--hero font-display text-[clamp(4.5rem,10vw,6.5rem)] font-extrabold leading-[0.95] mb-8 tracking-tight text-[var(--color-ink)]"
+    />
 
     <div class="prose prose-lg mb-12">
       <p>
@@ -87,8 +93,8 @@ const isSuccess = Astro.url.searchParams.get('success') === 'true';
     </form>
 
     {Astro.url.searchParams.get('success') === 'true' && (
-      <div class="mt-8 p-4 bg-[color-mix(in_oklab,var(--color-accent)_16%,transparent)] border border-[var(--color-accent)] rounded-[2px]">
-        <p class="text-[var(--color-accent-deep)] font-semibold">
+      <div class="contact-success" role="status">
+        <p>
           Message sent successfully. I'll get back to you soon.
         </p>
       </div>

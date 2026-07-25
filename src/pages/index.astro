@@ -3,6 +3,7 @@ import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import portrait from '../assets/author/portrait.jpg';
 import Gallery from '../components/Gallery.astro';
+import KineticText from '../components/KineticText.astro';
 import bioMarkdown from '../content/bio.md?raw';
 import Base from '../layouts/Base.astro';
 import { renderBioMarkdown } from '../lib/bio-markdown';
@@ -21,6 +22,15 @@ const featuredPublications = (await getCollection('publications'))
 const books = (await getCollection('books'))
   .filter((b) => !b.data.hideFromMain)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+
+const tickerPubs = [
+  ...new Set(
+    (await getCollection('publications'))
+      .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+      .slice(0, 18)
+      .map((p) => p.data.publisher)
+  ),
+];
 
 const notableBookEntries = await Promise.all(
   books
@@ -52,36 +62,56 @@ const notableBookEntries = await Promise.all(
   ]}
 >
   <div class="page-shell">
-    <section class="reveal grid lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-14 items-start mb-20 lg:mb-28">
+    <section class="hero-block grid lg:grid-cols-[380px_minmax(0,1fr)] gap-10 lg:gap-14 items-start mb-16 lg:mb-24">
       <div class="w-full max-w-[380px] mx-auto lg:mx-0">
-        <div class="portrait-frame">
+        <div class="portrait-frame portrait-frame--live" data-parallax="0.22">
           <Image
             src={portrait}
             alt="Mike Bagwell portrait"
-            class="w-full h-auto block"
+            class="w-full h-auto block portrait-img"
             widths={[380, 760]}
             sizes="380px"
             loading="eager"
           />
+          <div class="portrait-sheen" aria-hidden="true"></div>
         </div>
       </div>
 
       <div>
-        <h1 class="font-display text-[clamp(5.5rem,13vw,8rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-6">
-          Mike Bagwell
-        </h1>
-        <div class="prose prose-xl max-w-3xl" set:html={bioHtml} />
+        <KineticText
+          text="Mike Bagwell"
+          as="h1"
+          mode="chars"
+          when="load"
+          scramble
+          class="kinetic--hero font-display text-[clamp(5.5rem,13vw,8rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-6"
+        />
+        <div class="prose prose-xl max-w-3xl" data-kinetic-bio set:html={bioHtml} />
       </div>
     </section>
+
+    <div class="journal-marquee mb-20 lg:mb-28" aria-hidden="true">
+      <div class="journal-marquee__fade"></div>
+      <div class="journal-marquee__track" data-marquee>
+        {[...tickerPubs, ...tickerPubs].map((name) => (
+          <span class="journal-marquee__item">{name}</span>
+        ))}
+      </div>
+    </div>
 
     <section class="reveal mb-20 lg:mb-28">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
         <div>
-          <h2 class="display-section text-[var(--color-ink)]">
-            Books
-          </h2>
+          <KineticText
+            text="Books"
+            as="h2"
+            mode="chars"
+            when="scroll"
+            scramble
+            class="kinetic--section display-section text-[var(--color-ink)]"
+          />
         </div>
-        <a href="/books/" class="btn-ghost shrink-0">All books →</a>
+        <a href="/books/" class="btn-ghost shrink-0 stagger-child">All books →</a>
       </div>
 
       <div class="book-shelf" role="list">
@@ -125,16 +155,21 @@ const notableBookEntries = await Promise.all(
 
     <section class="reveal">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
-        <h2 class="display-section text-[var(--color-ink)]">
-          Recent writing
-        </h2>
-        <p class="text-base font-semibold text-[var(--color-mute)]">
+        <KineticText
+          text="Recent writing"
+          as="h2"
+          mode="chars"
+          when="scroll"
+          scramble
+          class="kinetic--section display-section text-[var(--color-ink)]"
+        />
+        <p class="text-base font-semibold text-[var(--color-mute)] stagger-child">
           Hover a cover to peek at the poem
         </p>
       </div>
       <Gallery limit={12} />
       <div class="mt-12">
-        <a href="/writing/" class="btn-primary">
+        <a href="/writing/" class="btn-primary stagger-child">
           All publications
         </a>
       </div>

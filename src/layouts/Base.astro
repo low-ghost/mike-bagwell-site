@@ -79,15 +79,17 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
       crossorigin
     />
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
+    {/* Early JS flag for SEO-safe progressive enhancement (no-JS keeps content visible) */}
+    <script is:inline>document.documentElement.classList.add('js');</script>
     <slot name="head" />
   </head>
   <body class="site-body antialiased">
     <div class="site-atmosphere" aria-hidden="true"></div>
-    <div class="min-h-screen flex flex-col relative z-[1]">
+    <div class="site-shell min-h-screen flex flex-col relative z-[1]">
       <header class="site-header">
         <nav class="site-rail" aria-label="Primary">
           <div class="flex justify-between items-center min-h-16 md:min-h-[4.25rem] gap-4 py-2.5 overflow-visible">
-            <a href="/" class="site-brand shrink-0">
+            <a href="/" class="site-brand shrink-0" data-brand-scramble>
               Mike Bagwell
             </a>
 
@@ -209,28 +211,10 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
     </div>
 
     <script>
-      const reveal = () => {
-        const nodes = document.querySelectorAll('.reveal:not(.is-visible)');
-        if (!nodes.length) return;
-        if (!('IntersectionObserver' in window)) {
-          nodes.forEach((el) => el.classList.add('is-visible'));
-          return;
-        }
-        // threshold 0: tall sections (e.g. full writing gallery) can never
-        // meet a fractional threshold when taller than the viewport.
-        const io = new IntersectionObserver(
-          (entries) => {
-            entries.forEach((entry) => {
-              if (entry.isIntersecting) {
-                entry.target.classList.add('is-visible');
-                io.unobserve(entry.target);
-              }
-            });
-          },
-          { rootMargin: '0px 0px -4% 0px', threshold: 0 }
-        );
-        nodes.forEach((el) => io.observe(el));
-      };
+      import { initSiteMotion } from '../scripts/site-motion';
+
+      const SCRAMBLE =
+        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789·';
 
       const bindNav = () => {
         const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
@@ -267,12 +251,44 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
         });
       };
 
-      reveal();
-      bindNav();
-      document.addEventListener('astro:page-load', () => {
-        reveal();
+      const bindBrandScramble = () => {
+        const brand = document.querySelector<HTMLElement>('[data-brand-scramble]');
+        if (!brand || brand.dataset.scrambleBound === '1') return;
+        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
+        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+        brand.dataset.scrambleBound = '1';
+        const original = brand.textContent || '';
+        let raf = 0;
+        brand.addEventListener('mouseenter', () => {
+          let frame = 0;
+          cancelAnimationFrame(raf);
+          const run = () => {
+            frame++;
+            const progress = Math.min(1, frame / 16);
+            brand.textContent = original
+              .split('')
+              .map((ch, i) => {
+                if (ch === ' ') return ' ';
+                if (i / original.length < progress) return original[i];
+                return SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
+              })
+              .join('');
+            if (progress < 1) raf = requestAnimationFrame(run);
+            else brand.textContent = original;
+          };
+          raf = requestAnimationFrame(run);
+        });
+      };
+
+      const boot = () => {
+        document.body.classList.remove('nav-open');
         bindNav();
-      });
+        bindBrandScramble();
+        initSiteMotion();
+      };
+
+      // Static site: full document load only (no Astro ClientRouter / view transitions)
+      boot();
     </script>
   </body>
 </html>

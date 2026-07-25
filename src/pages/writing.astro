@@ -1,5 +1,6 @@
 ---
 import Gallery from '../components/Gallery.astro';
+import KineticText from '../components/KineticText.astro';
 import Base from '../layouts/Base.astro';
 import { collectionPageSchema } from '../lib/seo-schema';
 
@@ -21,18 +22,21 @@ const description =
   ]}
 >
   <div class="page-shell">
-    <div class="reveal mb-12">
-      <h1 class="font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-4">
-        Writing
-      </h1>
+    <div class="mb-12">
+      <KineticText
+        text="Writing"
+        as="h1"
+        mode="chars"
+        when="load"
+        scramble
+        class="kinetic--hero font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-4"
+      />
       <p class="text-xl text-[var(--color-mute)]">
         <span class="hidden md:inline">Hover a cover for an excerpt.</span>
         <span class="md:hidden">Tap a cover to open the piece.</span>
       </p>
     </div>
 
-    <div class="reveal">
-      <Gallery />
-    </div>
+    <Gallery />
   </div>
 </Base>

@@ -87,6 +87,13 @@
   --color-accent: #2dd4bf;
   --color-accent-deep: #5eead4;
   --color-media: #1c222c;
+
+  /* Motion tokens — Emil Kowalski / AUDIT.md curves */
+  --ease-out: cubic-bezier(0.23, 1, 0.32, 1);
+  --ease-in-out: cubic-bezier(0.77, 0, 0.175, 1);
+  --ease-drawer: cubic-bezier(0.32, 0.72, 0, 1);
+  /* Legacy alias used across the site */
+  --ease-site: cubic-bezier(0.22, 1, 0.36, 1);
 }
 
 @layer base {
@@ -120,17 +127,58 @@
       scroll-behavior: auto;
     }
 
-    .reveal,
+    /* Gentler, not zero: keep opacity/color, drop movement */
+    .reveal {
+      opacity: 1 !important;
+      transition: opacity 200ms ease !important;
+    }
+
+    .pub-card,
     .pub-card__image,
     .pub-card__excerpt,
     .book-tile,
-    .featured-carousel img {
-      transition: none !important;
+    .social-link,
+    .bandcamp-embed,
+    .btn-primary,
+    .carousel-nav,
+    .featured-carousel__slide,
+    .featured-carousel img,
+    .ui-dialog,
+    .ui-dialog__panel,
+    .lightbox-zoom,
+    .contact-success {
+      transition:
+        opacity 200ms ease,
+        color 200ms ease,
+        background-color 200ms ease,
+        border-color 200ms ease !important;
       animation: none !important;
     }
 
-    .reveal {
+    .pub-card:hover,
+    .pub-card:focus-visible,
+    .book-tile:hover,
+    .social-link:hover,
+    .bandcamp-embed:hover,
+    .btn-primary:hover,
+    .btn-primary:active,
+    .carousel-nav:active,
+    .social-link:active,
+    .featured-carousel__slide.is-fading,
+    .ui-dialog__panel,
+    .contact-success {
+      transform: none !important;
+      filter: none !important;
+    }
+
+    .animate-fade-up,
+    .animate-fade-in,
+    .stagger-in > *,
+    .reveal.is-visible .book-tile,
+    .reveal.is-visible .pub-card {
+      animation: none !important;
       opacity: 1 !important;
+      transform: none !important;
     }
   }
 }
@@ -154,14 +202,28 @@
     mix-blend-mode: soft-light;
   }
 
+  /* Fixed (not sticky): GSAP transforms on siblings create stacking
+     contexts that intermittently bury sticky headers in WebKit. */
   .site-header {
-    position: sticky;
+    position: fixed;
     top: 0;
-    z-index: 60;
+    left: 0;
+    right: 0;
+    z-index: 100;
+    isolation: isolate;
     border-bottom: 1px solid var(--color-line);
-    background: rgba(12, 14, 18, 0.92);
-    /* Blur on a pseudo — backdrop-filter on the header itself can clip descenders in WebKit */
+    background: rgba(12, 14, 18, 0.97);
     overflow: visible;
+  }
+
+  .site-shell {
+    padding-top: 4.25rem;
+  }
+
+  @media (min-width: 768px) {
+    .site-shell {
+      padding-top: 4.5rem;
+    }
   }
 
   body.nav-open .site-header {
@@ -177,10 +239,15 @@
     content: "";
     position: absolute;
     inset: 0;
-    z-index: -1;
+    z-index: 0;
     backdrop-filter: blur(14px);
-    background: rgba(12, 14, 18, 0.72);
+    background: rgba(12, 14, 18, 0.88);
     pointer-events: none;
+  }
+
+  .site-header > * {
+    position: relative;
+    z-index: 1;
   }
 
   .site-brand {
@@ -228,7 +295,7 @@
     transform: scaleX(0);
     transform-origin: left;
     background: var(--color-accent);
-    transition: transform 220ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 220ms var(--ease-site);
   }
 
   .nav-link:hover::after,
@@ -251,6 +318,7 @@
     color: var(--color-ink);
     cursor: pointer;
     -webkit-tap-highlight-color: transparent;
+    transition: transform 160ms var(--ease-out);
   }
 
   .nav-toggle__bars {
@@ -264,22 +332,27 @@
     position: absolute;
     left: 0;
     right: 0;
+    top: 50%;
+    margin-top: -0.75px;
     height: 1.5px;
     background: currentColor;
     border-radius: 1px;
     transition:
-      transform 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      opacity 220ms ease,
-      top 420ms cubic-bezier(0.22, 1, 0.36, 1);
+      transform 320ms var(--ease-out),
+      opacity 200ms ease;
   }
 
-  .nav-toggle__bars span:nth-child(1) { top: 0; }
-  .nav-toggle__bars span:nth-child(2) { top: 50%; margin-top: -0.75px; }
-  .nav-toggle__bars span:nth-child(3) { top: 100%; margin-top: -1.5px; }
+  .nav-toggle__bars span:nth-child(1) {
+    transform: translateY(-0.35rem);
+  }
+  .nav-toggle__bars span:nth-child(2) {
+    transform: none;
+  }
+  .nav-toggle__bars span:nth-child(3) {
+    transform: translateY(0.35rem);
+  }
 
   .nav-toggle.is-open .nav-toggle__bars span:nth-child(1) {
-    top: 50%;
-    margin-top: -0.75px;
     transform: rotate(45deg);
   }
 
@@ -289,9 +362,11 @@
   }
 
   .nav-toggle.is-open .nav-toggle__bars span:nth-child(3) {
-    top: 50%;
-    margin-top: -0.75px;
     transform: rotate(-45deg);
+  }
+
+  .nav-toggle:active {
+    transform: scale(0.97);
   }
 
   body.nav-open {
@@ -323,7 +398,7 @@
       radial-gradient(520px 360px at 0% 100%, rgba(45, 212, 191, 0.08), transparent 50%),
       #0c0e12;
     clip-path: inset(0 0 100% 0);
-    transition: clip-path 560ms cubic-bezier(0.76, 0, 0.24, 1);
+    transition: clip-path 420ms var(--ease-drawer);
   }
 
   .mobile-nav.is-open .mobile-nav__panel {
@@ -348,18 +423,18 @@
     text-decoration: none;
     padding: 0.35rem 0;
     opacity: 0;
-    transform: translateY(1.1rem);
+    transform: translateY(0.85rem);
     transition:
       color 200ms ease,
-      opacity 420ms cubic-bezier(0.22, 1, 0.36, 1),
-      transform 520ms cubic-bezier(0.22, 1, 0.36, 1);
+      opacity 300ms var(--ease-out),
+      transform 320ms var(--ease-out);
     transition-delay: 0ms;
   }
 
   .mobile-nav.is-open .mobile-nav__link {
     opacity: 1;
     transform: none;
-    transition-delay: calc(140ms + var(--i, 0) * 55ms);
+    transition-delay: calc(90ms + var(--i, 0) * 45ms);
   }
 
   .mobile-nav__link:hover,
@@ -492,16 +567,18 @@
     letter-spacing: -0.01em;
     text-decoration: none;
     border-radius: 2px;
-    transition: transform 200ms ease, background 200ms ease;
+    transition: transform 160ms var(--ease-out), background 200ms ease;
   }
 
-  .btn-primary:hover {
-    background: var(--color-accent-deep);
-    transform: translateY(-1px);
+  @media (hover: hover) and (pointer: fine) {
+    .btn-primary:hover {
+      background: var(--color-accent-deep);
+      transform: translateY(-1px);
+    }
   }
 
   .btn-primary:active {
-    transform: translateY(0) scale(0.98);
+    transform: translateY(0) scale(0.97);
   }
 
   .btn-ghost {
@@ -527,6 +604,33 @@
     border-radius: 2px;
     box-shadow: 0 28px 50px -28px rgba(17, 19, 24, 0.55);
     border: 1px solid var(--color-line);
+    position: relative;
+  }
+
+  .portrait-frame--live {
+    will-change: transform;
+  }
+
+  .portrait-sheen {
+    pointer-events: none;
+    position: absolute;
+    inset: -20%;
+    background: linear-gradient(
+      120deg,
+      transparent 35%,
+      color-mix(in oklab, var(--color-accent) 22%, transparent) 48%,
+      transparent 62%
+    );
+    transform: translateX(-60%) rotate(12deg);
+    opacity: 0.55;
+    animation: portrait-sheen 7.5s var(--ease-in-out) infinite;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .portrait-sheen {
+      animation: none;
+      opacity: 0;
+    }
   }
 
   .carousel-nav {
@@ -540,7 +644,11 @@
     background: var(--color-panel);
     color: var(--color-ink);
     font-size: 0.95rem;
-    transition: background 180ms ease, color 180ms ease, border-color 180ms ease;
+    transition:
+      background 180ms ease,
+      color 180ms ease,
+      border-color 180ms ease,
+      transform 160ms var(--ease-out);
   }
 
   .carousel-nav:hover {
@@ -549,14 +657,60 @@
     color: #0c0e12;
   }
 
-  /* Opacity-only: transform creates a containing block that can clip descenders */
+  .carousel-nav:active {
+    transform: scale(0.97);
+  }
+
+  /* Visible by default (SSG / no-JS). Motion may fade in via .is-visible. */
   .reveal {
-    opacity: 0;
-    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 700ms var(--ease-site);
   }
 
   .reveal.is-visible {
     opacity: 1;
+  }
+
+  /* Only hide pending reveals after GSAP has registered triggers */
+  @media (prefers-reduced-motion: no-preference) {
+    html.motion-ready .reveal:not(.is-visible) {
+      opacity: 0;
+    }
+  }
+
+  /* One-shot stagger inside revealed sections (decorative, never blocks) */
+  .reveal.is-visible .book-tile,
+  .reveal.is-visible .pub-card,
+  .reveal.is-visible.stagger-in > * {
+    animation: fade-up 280ms var(--ease-out) both;
+  }
+
+  .reveal.is-visible .book-tile:nth-child(1),
+  .reveal.is-visible .pub-card:nth-child(1),
+  .reveal.is-visible.stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+  .reveal.is-visible .book-tile:nth-child(2),
+  .reveal.is-visible .pub-card:nth-child(2),
+  .reveal.is-visible.stagger-in > *:nth-child(2) { animation-delay: 40ms; }
+  .reveal.is-visible .book-tile:nth-child(3),
+  .reveal.is-visible .pub-card:nth-child(3),
+  .reveal.is-visible.stagger-in > *:nth-child(3) { animation-delay: 80ms; }
+  .reveal.is-visible .book-tile:nth-child(4),
+  .reveal.is-visible .pub-card:nth-child(4),
+  .reveal.is-visible.stagger-in > *:nth-child(4) { animation-delay: 120ms; }
+  .reveal.is-visible .book-tile:nth-child(5),
+  .reveal.is-visible .pub-card:nth-child(5),
+  .reveal.is-visible.stagger-in > *:nth-child(5) { animation-delay: 160ms; }
+  .reveal.is-visible .book-tile:nth-child(6),
+  .reveal.is-visible .pub-card:nth-child(6),
+  .reveal.is-visible.stagger-in > *:nth-child(6) { animation-delay: 200ms; }
+  .reveal.is-visible .book-tile:nth-child(n + 7),
+  .reveal.is-visible .pub-card:nth-child(n + 7),
+  .reveal.is-visible.stagger-in > *:nth-child(n + 7) { animation-delay: 240ms; }
+
+  /* GSAP owns these when motion boots */
+  html.motion-ready .reveal.is-visible .book-tile,
+  html.motion-ready .reveal.is-visible .pub-card,
+  html.motion-ready .reveal.is-visible.stagger-in > * {
+    animation: none;
   }
 
   /* Publication masonry — sequential columns preserve DOM/date order L→R */
@@ -565,10 +719,50 @@
     min-height: 12rem;
   }
 
+  /*
+   * Soft paint gate (JS only): hide the grid→absolute jump without removing
+   * HTML from the document (SEO-safe). No-JS users never get `.js`, so the
+   * CSS grid fallback stays fully visible.
+   */
+  @media (prefers-reduced-motion: no-preference) {
+    html.js .pub-masonry:not(.pub-masonry--ready) {
+      opacity: 0;
+    }
+
+    html.js .pub-masonry.pub-masonry--ready {
+      opacity: 1;
+      transition: opacity 160ms ease;
+    }
+
+    /* Dramatic enter via one-shot CSS keyframes (not GSAP — relayout-safe).
+       Waiting cards are pre-posed; `.pub-card--settled` locks the end state
+       so nothing can snap back to invisible after the animation. */
+    html.motion-ready .pub-masonry--ready .pub-card:not(.pub-card--in):not(.pub-card--settled) {
+      opacity: 0;
+      transform:
+        translateY(1.45rem)
+        rotate(var(--masonry-enter-rot, -1.8deg))
+        scale(0.94);
+      filter: blur(2px);
+    }
+
+    html.motion-ready .pub-masonry--ready .pub-card.pub-card--in:not(.pub-card--settled) {
+      animation: pub-masonry-enter 0.8s var(--ease-out) both;
+      animation-delay: calc(var(--masonry-col, 0) * 55ms);
+    }
+
+    html.motion-ready .pub-masonry--ready .pub-card.pub-card--settled {
+      animation: none;
+      opacity: 1;
+      transform: none;
+      filter: none;
+    }
+  }
+
   .pub-masonry:not(.pub-masonry--ready) {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 1.25rem;
+    gap: 1rem;
   }
 
   @media (min-width: 768px) {
@@ -599,13 +793,21 @@
     text-decoration: none;
     color: inherit;
     margin-bottom: 0;
-    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 280ms ease;
+    transition: box-shadow 280ms ease;
   }
 
-  .pub-card:hover,
   .pub-card:focus-visible {
-    transform: translateY(-3px);
     box-shadow: 0 22px 40px -24px rgba(0, 0, 0, 0.75);
+  }
+
+  .pub-card:active .pub-card__media {
+    transform: scale(0.985);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .pub-card:hover {
+      box-shadow: 0 22px 40px -24px rgba(0, 0, 0, 0.75);
+    }
   }
 
   .pub-card--archived {
@@ -624,7 +826,7 @@
     width: 100%;
     height: 100%;
     object-fit: contain;
-    transition: transform 650ms cubic-bezier(0.22, 1, 0.36, 1), filter 350ms ease;
+    transition: transform 650ms var(--ease-site), filter 350ms ease;
   }
 
   .pub-card:focus-visible .pub-card__image {
@@ -640,7 +842,7 @@
     padding: 1.35rem 1.2rem 1.4rem;
     opacity: 0;
     transform: translateY(10px);
-    transition: opacity 280ms ease, transform 320ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: opacity 280ms ease, transform 320ms var(--ease-site);
     pointer-events: none;
     background: linear-gradient(
       to top,
@@ -734,6 +936,7 @@
     padding: 0.75rem 0.15rem 1.5rem;
     scroll-snap-type: x mandatory;
     -webkit-overflow-scrolling: touch;
+    perspective: 1100px;
   }
 
   .book-shelf::-webkit-scrollbar {
@@ -789,11 +992,22 @@
     scroll-snap-align: start;
     text-decoration: none;
     color: inherit;
-    transition: transform 280ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 280ms var(--ease-site);
+    transform-style: preserve-3d;
   }
 
-  .book-tile:hover {
-    transform: translateY(-8px) rotate(-1.5deg);
+  .book-tile:active {
+    transform: scale(0.98);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .book-tile:hover {
+      transform: translateY(-8px) rotate(-1.5deg);
+    }
+
+    html.motion-ready .book-tile:hover {
+      transform: none;
+    }
   }
 
   .book-tile__cover {
@@ -807,6 +1021,8 @@
       6px 10px 0 -2px color-mix(in oklab, var(--color-accent) 12%, transparent),
       0 22px 36px -24px rgba(0, 0, 0, 0.75);
     background: var(--color-media);
+    transform-style: preserve-3d;
+    will-change: transform;
   }
 
   .book-tile__title {
@@ -842,14 +1058,24 @@
     border: 1px solid var(--color-line);
     border-radius: 2px;
     background: var(--color-panel);
-    transition: color 180ms ease, border-color 180ms ease, background 180ms ease, transform 180ms ease;
+    transition:
+      color 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease,
+      transform 160ms var(--ease-out);
   }
 
-  .social-link:hover {
-    color: #0c0e12;
-    background: var(--color-accent);
-    border-color: var(--color-accent);
-    transform: translateY(-1px);
+  .social-link:active {
+    transform: scale(0.97);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .social-link:hover {
+      color: #0c0e12;
+      background: var(--color-accent);
+      border-color: var(--color-accent);
+      transform: translateY(-1px);
+    }
   }
 
   .social-link svg {
@@ -859,11 +1085,13 @@
   }
 
   .bandcamp-embed {
-    transition: transform 400ms cubic-bezier(0.22, 1, 0.36, 1);
+    transition: transform 400ms var(--ease-site);
   }
 
-  .bandcamp-embed:hover {
-    transform: translateY(-4px);
+  @media (hover: hover) and (pointer: fine) {
+    .bandcamp-embed:hover {
+      transform: translateY(-4px);
+    }
   }
 
   .section-rule {
@@ -871,6 +1099,299 @@
     background: var(--color-line);
     border: 0;
     margin: 0;
+  }
+
+  /* Featured carousel — interruptible crossfade */
+  .featured-carousel__slide {
+    transition:
+      opacity 300ms var(--ease-out),
+      transform 320ms var(--ease-out),
+      filter 220ms ease;
+    will-change: opacity, transform;
+  }
+
+  .featured-carousel__slide.is-fading {
+    opacity: 0;
+    transform: translateX(calc(var(--slide-dir, 1) * -10px));
+    filter: blur(2px);
+    pointer-events: none;
+  }
+
+  .featured-carousel__dot {
+    height: 0.375rem;
+    flex: 1;
+    border-radius: 999px;
+    background: var(--color-line);
+    transition: background-color 180ms ease, transform 160ms var(--ease-out);
+  }
+
+  .featured-carousel__dot:hover {
+    background: var(--color-mute);
+  }
+
+  .featured-carousel__dot.is-active {
+    background: var(--color-accent);
+  }
+
+  .featured-carousel__dot:active {
+    transform: scale(0.97);
+  }
+
+  /* Dialogs — site-token surface + scale-in enter */
+  .ui-dialog {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.82);
+    backdrop-filter: blur(6px);
+    opacity: 0;
+    transition: opacity 220ms var(--ease-out);
+  }
+
+  .ui-dialog.is-open {
+    opacity: 1;
+  }
+
+  .ui-dialog.is-closing {
+    opacity: 0;
+    transition-duration: 180ms;
+  }
+
+  .ui-dialog__panel {
+    position: relative;
+    width: 100%;
+    max-width: 48rem;
+    max-height: 90vh;
+    overflow: auto;
+    padding: 2rem;
+    border-radius: 2px;
+    border: 1px solid var(--color-line);
+    background: var(--color-panel);
+    color: var(--color-ink);
+    box-shadow: 0 28px 50px -28px rgba(0, 0, 0, 0.75);
+    opacity: 0;
+    transform: scale(0.96);
+    transition:
+      opacity 260ms var(--ease-out),
+      transform 260ms var(--ease-out);
+  }
+
+  .ui-dialog.is-open .ui-dialog__panel {
+    opacity: 1;
+    transform: none;
+  }
+
+  .ui-dialog.is-closing .ui-dialog__panel {
+    opacity: 0;
+    transform: scale(0.97);
+    transition-duration: 180ms;
+  }
+
+  .ui-dialog__close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 2.25rem;
+    height: 2.25rem;
+    border: 1px solid var(--color-line);
+    border-radius: 2px;
+    background: transparent;
+    color: var(--color-mute);
+    font-size: 1.5rem;
+    line-height: 1;
+    transition:
+      color 180ms ease,
+      border-color 180ms ease,
+      background 180ms ease,
+      transform 160ms var(--ease-out);
+  }
+
+  .ui-dialog__close:hover {
+    color: var(--color-ink);
+    border-color: var(--color-accent);
+    background: color-mix(in oklab, var(--color-accent) 12%, transparent);
+  }
+
+  .ui-dialog__close:active {
+    transform: scale(0.97);
+  }
+
+  .lightbox-shell {
+    position: fixed;
+    inset: 0;
+    z-index: 50;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 220ms var(--ease-out);
+  }
+
+  .lightbox-shell.is-open {
+    opacity: 1;
+  }
+
+  .lightbox-shell.is-closing {
+    opacity: 0;
+    transition-duration: 180ms;
+  }
+
+  .lightbox-figure {
+    position: relative;
+    max-height: 90vh;
+    max-width: min(1100px, 96vw);
+    opacity: 0;
+    transform: scale(0.97);
+    transition:
+      opacity 260ms var(--ease-out),
+      transform 260ms var(--ease-out);
+  }
+
+  .lightbox-shell.is-open .lightbox-figure {
+    opacity: 1;
+    transform: none;
+  }
+
+  .lightbox-shell.is-closing .lightbox-figure {
+    opacity: 0;
+    transform: scale(0.98);
+    transition-duration: 180ms;
+  }
+
+  .lightbox-image {
+    max-height: 82vh;
+    width: auto;
+    max-width: 100%;
+    object-fit: contain;
+    margin-inline: auto;
+    box-shadow: 0 28px 50px -20px rgba(0, 0, 0, 0.8);
+    transition: opacity 200ms var(--ease-out);
+  }
+
+  .lightbox-image.is-swapping {
+    opacity: 0;
+  }
+
+  .lightbox-zoom {
+    pointer-events: none;
+    position: absolute;
+    bottom: 0.75rem;
+    right: 0.75rem;
+    border-radius: 999px;
+    background: rgba(0, 0, 0, 0.55);
+    padding: 0.25rem 0.75rem;
+    font-size: 0.75rem;
+    color: #fff;
+    opacity: 0;
+    transform: translateY(4px);
+    transition:
+      opacity 220ms var(--ease-out),
+      transform 220ms var(--ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .group:hover .lightbox-zoom {
+      opacity: 1;
+      transform: none;
+    }
+  }
+
+  .contact-success {
+    margin-top: 2rem;
+    padding: 1rem;
+    border-radius: 2px;
+    border: 1px solid var(--color-accent);
+    background: color-mix(in oklab, var(--color-accent) 16%, transparent);
+    opacity: 0;
+    transform: scale(0.97);
+    animation: success-pop 400ms var(--ease-out) forwards;
+  }
+
+  .contact-success p {
+    color: var(--color-accent-deep);
+    font-weight: 600;
+  }
+
+  /* Kinetic typography */
+  .kinetic {
+    perspective: 800px;
+  }
+
+  .kinetic__visual {
+    display: inline;
+  }
+
+  .kinetic__char,
+  .kinetic__word {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    padding-bottom: 0.14em;
+    margin-bottom: -0.14em;
+  }
+
+  .kinetic__inner {
+    display: inline-block;
+    will-change: transform, opacity, filter;
+    backface-visibility: hidden;
+  }
+
+  .kinetic__space {
+    display: inline-block;
+    width: 0.28em;
+  }
+
+  .kinetic--hero .kinetic__char {
+    margin-inline: -0.01em;
+  }
+
+  /* Journal marquee */
+  .journal-marquee {
+    position: relative;
+    overflow: hidden;
+    border-block: 1px solid var(--color-line);
+    padding-block: 0.85rem;
+    mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  }
+
+  .journal-marquee__track {
+    display: flex;
+    width: max-content;
+    gap: 0;
+    will-change: transform;
+  }
+
+  .journal-marquee__item {
+    flex: none;
+    padding-inline: 1.35rem;
+    font-family: var(--font-display);
+    font-size: clamp(1.15rem, 2.4vw, 1.65rem);
+    font-weight: 300;
+    letter-spacing: -0.03em;
+    color: var(--color-ink-soft);
+    white-space: nowrap;
+  }
+
+  .journal-marquee__item::after {
+    content: "·";
+    margin-left: 1.35rem;
+    color: var(--color-accent);
+    opacity: 0.7;
+  }
+
+  .pub-card {
+    transform-style: preserve-3d;
+    will-change: transform;
   }
 }
 
@@ -885,13 +1406,46 @@
   }
 }
 
+@keyframes pub-masonry-enter {
+  from {
+    opacity: 0;
+    transform:
+      translateY(1.45rem)
+      rotate(var(--masonry-enter-rot, -1.8deg))
+      scale(0.94);
+    filter: blur(2px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) rotate(0deg) scale(1);
+    filter: blur(0);
+  }
+}
+
 @keyframes fade-in {
   from { opacity: 0; }
   to { opacity: 1; }
 }
 
+@keyframes success-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+@keyframes portrait-sheen {
+  0% { transform: translateX(-70%) rotate(12deg); }
+  45% { transform: translateX(70%) rotate(12deg); }
+  100% { transform: translateX(70%) rotate(12deg); }
+}
+
 .animate-fade-up {
-  animation: fade-up 480ms cubic-bezier(0.22, 1, 0.36, 1) both;
+  animation: fade-up 480ms var(--ease-site) both;
 }
 
 .animate-fade-in {

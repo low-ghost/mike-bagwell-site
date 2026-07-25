@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 export interface LightboxImage {
   src: string;
@@ -10,35 +10,108 @@ interface ImageLightboxProps {
   images: LightboxImage[];
 }
 
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
 export function ImageLightbox({ images }: ImageLightboxProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [swapping, setSwapping] = useState(false);
+  const swapTimer = useRef<number | null>(null);
+  const pendingIndex = useRef<number | null>(null);
+  const displayIndexRef = useRef(0);
+
+  displayIndexRef.current = displayIndex;
+  const isOpen = openIndex !== null;
 
   const close = useCallback(() => setOpenIndex(null), []);
-  const show = openIndex !== null;
-  const current = show ? images[openIndex] : null;
+
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+      setDisplayIndex(openIndex!);
+      displayIndexRef.current = openIndex!;
+      setSwapping(false);
+      const id = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setVisible(true));
+      });
+      return () => cancelAnimationFrame(id);
+    }
+    setVisible(false);
+  }, [isOpen, openIndex]);
+
+  const commitSwap = useCallback(() => {
+    if (pendingIndex.current == null) return;
+    const next = pendingIndex.current;
+    pendingIndex.current = null;
+    setDisplayIndex(next);
+    displayIndexRef.current = next;
+    setOpenIndex(next);
+    requestAnimationFrame(() => setSwapping(false));
+  }, []);
 
   const go = useCallback(
     (delta: number) => {
       if (openIndex === null || images.length === 0) return;
-      setOpenIndex(((openIndex + delta) % images.length + images.length) % images.length);
+      const current = displayIndexRef.current;
+      const next =
+        ((current + delta) % images.length + images.length) % images.length;
+      if (next === current) return;
+
+      if (prefersReducedMotion()) {
+        if (swapTimer.current != null) window.clearTimeout(swapTimer.current);
+        pendingIndex.current = null;
+        setDisplayIndex(next);
+        displayIndexRef.current = next;
+        setOpenIndex(next);
+        setSwapping(false);
+        return;
+      }
+
+      pendingIndex.current = next;
+      setSwapping(true);
+      if (swapTimer.current != null) window.clearTimeout(swapTimer.current);
+      swapTimer.current = window.setTimeout(() => commitSwap(), 160);
     },
-    [openIndex, images.length]
+    [openIndex, images.length, commitSwap]
   );
 
   useEffect(() => {
-    if (!show) return;
+    if (!mounted || !visible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+
     const onKey = (e: KeyboardEvent) => {
       if (e.key === 'Escape') close();
       if (e.key === 'ArrowRight') go(1);
       if (e.key === 'ArrowLeft') go(-1);
     };
-    document.body.style.overflow = 'hidden';
     window.addEventListener('keydown', onKey);
     return () => {
-      document.body.style.overflow = '';
+      document.body.style.overflow = prev;
       window.removeEventListener('keydown', onKey);
     };
-  }, [show, close, go]);
+  }, [mounted, visible, close, go]);
+
+  useEffect(() => {
+    return () => {
+      if (swapTimer.current != null) window.clearTimeout(swapTimer.current);
+    };
+  }, []);
+
+  const handleShellTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (!isOpen && !visible) setMounted(false);
+  };
+
+  const current = images[displayIndex];
+  const stateClass = visible ? ' is-open' : ' is-closing';
 
   return (
     <>
@@ -61,24 +134,23 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
               className="w-full h-auto transition-transform duration-500 ease-out group-hover:scale-[1.03]"
             />
             <span className="pointer-events-none absolute inset-0 bg-black/0 transition-colors duration-300 group-hover:bg-black/10" />
-            <span className="pointer-events-none absolute bottom-3 right-3 rounded-full bg-black/55 px-3 py-1 text-xs text-white opacity-0 translate-y-1 transition-all duration-300 group-hover:opacity-100 group-hover:translate-y-0">
-              Zoom
-            </span>
+            <span className="lightbox-zoom">Zoom</span>
           </button>
         ))}
       </div>
 
-      {show && current && (
+      {mounted && current && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/90 p-4 backdrop-blur-sm animate-fade-in"
+          className={`lightbox-shell${stateClass}`}
           role="dialog"
           aria-modal="true"
           aria-label={current.alt}
           onClick={close}
+          onTransitionEnd={handleShellTransitionEnd}
         >
           <button
             type="button"
-            className="absolute top-4 right-4 z-10 rounded-full border border-white/20 bg-black/40 px-3 py-1 text-2xl leading-none text-white hover:bg-black/70"
+            className="absolute top-4 right-4 z-10 carousel-nav !border-white/30 !text-white !bg-black/30 hover:!bg-black/60"
             aria-label="Close gallery"
             onClick={close}
           >
@@ -113,19 +185,19 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
           )}
 
           <figure
-            className="relative max-h-[90vh] max-w-[min(1100px,96vw)] animate-fade-up"
+            className="lightbox-figure"
             onClick={(e) => e.stopPropagation()}
           >
             <img
               src={current.src}
               srcSet={current.srcSet}
               alt={current.alt}
-              className="max-h-[82vh] w-auto max-w-full object-contain mx-auto shadow-2xl"
+              className={`lightbox-image${swapping ? ' is-swapping' : ''}`}
             />
             <figcaption className="mt-4 flex items-center justify-between gap-4 text-sm text-white/75">
               <span className="truncate">{current.alt}</span>
               <span className="tabular-nums shrink-0">
-                {(openIndex ?? 0) + 1} / {images.length}
+                {displayIndex + 1} / {images.length}
               </span>
             </figcaption>
           </figure>

@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import KineticText from '../components/KineticText.astro';
 import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { renderBioMarkdown } from '../lib/bio-markdown';
@@ -43,10 +44,15 @@ const schemaBooks = await Promise.all(
   ]}
 >
   <div class="page-shell">
-    <header class="reveal mb-12">
-      <h1 class="font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)]">
-        Books
-      </h1>
+    <header class="mb-12">
+      <KineticText
+        text="Books"
+        as="h1"
+        mode="chars"
+        when="load"
+        scramble
+        class="kinetic--hero font-display text-[clamp(5rem,11vw,7rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)]"
+      />
       <p class="mt-4 text-xl text-[var(--color-mute)] max-w-2xl">
         Chapbooks and published collections.
       </p>

@@ -1,4 +1,5 @@
 import { useEffect, useState, useCallback, useRef } from 'react';
+import { animate } from 'motion';
 
 export interface FeaturedSlide {
   title: string;
@@ -21,19 +22,87 @@ function normalizeUrl(url: string): string {
   return `https://${url}`;
 }
 
+function prefersReducedMotion(): boolean {
+  return (
+    typeof window !== 'undefined' &&
+    window.matchMedia('(prefers-reduced-motion: reduce)').matches
+  );
+}
+
 export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
   const [index, setIndex] = useState(0);
+  const [displayIndex, setDisplayIndex] = useState(0);
+  const [fading, setFading] = useState(false);
   const [paused, setPaused] = useState(false);
+  const [dir, setDir] = useState(1);
   const touchStartX = useRef<number | null>(null);
+  const pendingIndex = useRef<number | null>(null);
+  const fadeTimer = useRef<number | null>(null);
+  const slideRef = useRef<HTMLAnchorElement>(null);
 
   const count = slides.length;
+
+  const clearFadeTimer = () => {
+    if (fadeTimer.current != null) {
+      window.clearTimeout(fadeTimer.current);
+      fadeTimer.current = null;
+    }
+  };
+
+  const commitPending = useCallback(() => {
+    if (pendingIndex.current == null) return;
+    setDisplayIndex(pendingIndex.current);
+    setIndex(pendingIndex.current);
+    pendingIndex.current = null;
+    requestAnimationFrame(() => {
+      setFading(false);
+      const el = slideRef.current;
+      if (!el || prefersReducedMotion()) return;
+      // Typed as Element keyframes — motion's DOM overload is picky in v12
+      void animate(
+        el,
+        {
+          opacity: [0, 1],
+          x: [10 * dir, 0],
+          scale: [0.985, 1],
+        },
+        { duration: 0.42, ease: [0.23, 1, 0.32, 1] }
+      );
+    });
+  }, [dir]);
+
   const go = useCallback(
     (next: number) => {
       if (count === 0) return;
-      setIndex(((next % count) + count) % count);
+      const normalized = ((next % count) + count) % count;
+      if (normalized === (pendingIndex.current ?? index)) return;
+
+      const forward =
+        (normalized - index + count) % count <= Math.floor(count / 2);
+      setDir(forward ? 1 : -1);
+
+      if (prefersReducedMotion()) {
+        clearFadeTimer();
+        pendingIndex.current = null;
+        setIndex(normalized);
+        setDisplayIndex(normalized);
+        setFading(false);
+        return;
+      }
+
+      pendingIndex.current = normalized;
+      setFading(true);
+      clearFadeTimer();
+      fadeTimer.current = window.setTimeout(() => {
+        commitPending();
+      }, 280);
     },
-    [count]
+    [count, index, commitPending]
   );
+
+  useEffect(() => {
+    return () => clearFadeTimer();
+  }, []);
 
   useEffect(() => {
     if (paused || count <= 1) return;
@@ -43,7 +112,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
 
   if (count === 0) return null;
 
-  const slide = slides[index];
+  const slide = slides[displayIndex];
   const href = normalizeUrl(slide.url);
 
   return (
@@ -66,9 +135,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
       }}
     >
       <div className="flex items-end justify-between gap-4 mb-8">
-        <h2 className="display-section text-[var(--color-ink)]">
-          Featured
-        </h2>
+        <h2 className="display-section text-[var(--color-ink)]">Featured</h2>
         {count > 1 && (
           <div className="flex items-center gap-2">
             <button
@@ -80,7 +147,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
               ←
             </button>
             <span className="text-sm tabular-nums font-semibold text-[var(--color-mute)] min-w-[3.5rem] text-center">
-              {index + 1} / {count}
+              {displayIndex + 1} / {count}
             </span>
             <button
               type="button"
@@ -95,11 +162,15 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
       </div>
 
       <a
+        ref={slideRef}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className="group grid md:grid-cols-[minmax(0,380px)_1fr] gap-8 md:gap-12 items-stretch no-underline text-inherit outline-none"
-        key={slide.title}
+        className={`featured-carousel__slide group grid md:grid-cols-[minmax(0,380px)_1fr] gap-8 md:gap-12 items-stretch no-underline text-inherit outline-none${
+          fading ? ' is-fading' : ''
+        }`}
+        style={{ ['--slide-dir' as string]: String(dir) }}
+        aria-live="polite"
       >
         <div className="relative overflow-hidden rounded-[2px] bg-[var(--color-media)] aspect-[4/5] border border-[var(--color-line)] shadow-[0_28px_50px_-28px_rgba(0,0,0,0.75)]">
           <img
@@ -113,7 +184,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
           />
         </div>
 
-        <div className="min-w-0 flex flex-col justify-center py-1 md:py-4 animate-fade-up">
+        <div className="min-w-0 flex flex-col justify-center py-1 md:py-4">
           <p className="text-sm font-bold uppercase tracking-[0.14em] text-[var(--color-accent-deep)] mb-4">
             {slide.publisher}
             <span className="mx-2 opacity-40">/</span>
@@ -149,10 +220,9 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
               key={i}
               type="button"
               aria-label={`Go to featured item ${i + 1}`}
-              className={`h-1.5 flex-1 rounded-full transition-all duration-300 ${
-                i === index
-                  ? 'bg-[var(--color-accent)]'
-                  : 'bg-[var(--color-line)] hover:bg-[var(--color-mute)]'
+              aria-current={i === displayIndex ? 'true' : undefined}
+              className={`featured-carousel__dot${
+                i === displayIndex ? ' is-active' : ''
               }`}
               onClick={() => go(i)}
             />

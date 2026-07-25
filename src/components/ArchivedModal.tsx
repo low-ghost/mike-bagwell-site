@@ -1,14 +1,16 @@
-import { useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 
 interface ArchivedModalProps {
   title: string;
   publisher: string;
   archivedBody: string;
+  isOpen: boolean;
+  onClose: () => void;
 }
 
 export function useArchivedModal() {
   const [isOpen, setIsOpen] = useState(false);
-  
+
   return {
     isOpen,
     open: () => setIsOpen(true),
@@ -16,35 +18,82 @@ export function useArchivedModal() {
   };
 }
 
-export function ArchivedModal({ 
-  title, 
+export function ArchivedModal({
+  title,
   publisher,
   archivedBody,
   isOpen,
   onClose,
-}: ArchivedModalProps & { isOpen: boolean; onClose: () => void }) {
-  if (!isOpen) return null;
+}: ArchivedModalProps) {
+  const [mounted, setMounted] = useState(false);
+  const [visible, setVisible] = useState(false);
+  const titleId = useId();
+  const closeBtnRef = useRef<HTMLButtonElement>(null);
+
+  useEffect(() => {
+    if (isOpen) {
+      setMounted(true);
+      const id = requestAnimationFrame(() => {
+        requestAnimationFrame(() => setVisible(true));
+      });
+      return () => cancelAnimationFrame(id);
+    }
+    setVisible(false);
+  }, [isOpen]);
+
+  useEffect(() => {
+    if (!mounted || !visible) return;
+    const prev = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    closeBtnRef.current?.focus({ preventScroll: true });
+
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+    };
+    window.addEventListener('keydown', onKey);
+    return () => {
+      document.body.style.overflow = prev;
+      window.removeEventListener('keydown', onKey);
+    };
+  }, [mounted, visible, onClose]);
+
+  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
+    if (e.target !== e.currentTarget) return;
+    if (!isOpen && !visible) setMounted(false);
+  };
+
+  if (!mounted) return null;
+
+  const stateClass = visible ? ' is-open' : ' is-closing';
 
   return (
-    <div 
-      className="fixed inset-0 bg-black/80 z-50 flex items-center justify-center p-4 backdrop-blur-sm"
+    <div
+      className={`ui-dialog${stateClass}`}
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby={titleId}
       onClick={onClose}
+      onTransitionEnd={handleTransitionEnd}
     >
-      <div 
-        className="bg-white dark:bg-neutral-900 rounded-lg max-w-3xl w-full max-h-[90vh] overflow-auto p-8 relative"
-        onClick={(e) => e.stopPropagation()}
-      >
+      <div className="ui-dialog__panel" onClick={(e) => e.stopPropagation()}>
         <button
+          ref={closeBtnRef}
+          type="button"
           onClick={onClose}
-          className="absolute top-4 right-4 text-neutral-500 hover:text-neutral-900 dark:hover:text-neutral-100 text-2xl leading-none"
+          className="ui-dialog__close"
           aria-label="Close"
         >
           &times;
         </button>
-        <h2 className="text-2xl font-semibold mb-2">{title}</h2>
-        <p className="text-sm text-neutral-600 dark:text-neutral-400 mb-6">{publisher}</p>
-        <div 
-          className="prose prose-neutral dark:prose-invert max-w-none"
+        <h2
+          id={titleId}
+          className="font-display text-2xl font-normal tracking-tight mb-2 text-[var(--color-ink)]"
+        >
+          {title}
+        </h2>
+        <p className="text-sm text-[var(--color-mute)] mb-6">{publisher}</p>
+        <div
+          className="prose max-w-none"
           dangerouslySetInnerHTML={{ __html: archivedBody }}
         />
       </div>

@@ -68,6 +68,8 @@ function contentReloadPlugin() {
 
 export default defineConfig({
   site: 'https://mikebagwell.me',
+  // Static HTML for Cloudflare Pages — no SSR adapter.
+  output: 'static',
   trailingSlash: 'always',
   compressHTML: true,
   integrations: [

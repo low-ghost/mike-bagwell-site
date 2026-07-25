@@ -19,9 +19,11 @@ export type MasonryOptions = {
 };
 
 function columnCount(width: number, minColWidth: number, gap: number): number {
-  if (width <= 0) return 1;
+  if (width <= 0) return 2;
+  // Phones: always two-up publications
+  if (width < 768) return 2;
   const cols = Math.floor((width + gap) / (minColWidth + gap));
-  return Math.max(1, Math.min(4, cols));
+  return Math.max(2, Math.min(4, cols));
 }
 
 function shortestColumn(heights: number[]): number {
@@ -54,7 +56,8 @@ export function initPubMasonry(
 
     const width = container.clientWidth;
     const cols = columnCount(width, minColWidth, gap);
-    const colWidth = (width - gap * (cols - 1)) / cols;
+    const useGap = width < 768 ? Math.min(gap, 16) : gap;
+    const colWidth = (width - useGap * (cols - 1)) / cols;
     const heights = Array.from({ length: cols }, () => 0);
 
     // Keep most of the grid sequential; rebalance only the tail so a tall
@@ -74,11 +77,17 @@ export function initPubMasonry(
     });
 
     const place = (card: HTMLElement, col: number) => {
-      const x = col * (colWidth + gap);
+      const x = col * (colWidth + useGap);
       const y = heights[col];
       card.style.left = `${x}px`;
       card.style.top = `${y}px`;
-      heights[col] += card.offsetHeight + gap;
+      card.style.setProperty('--masonry-col', String(col));
+      card.style.setProperty(
+        '--masonry-enter-rot',
+        col % 2 === 0 ? '-2.2deg' : '2.2deg'
+      );
+      card.dataset.masonryCol = String(col);
+      heights[col] += card.offsetHeight + useGap;
     };
 
     for (let i = 0; i < split; i++) {
@@ -88,7 +97,11 @@ export function initPubMasonry(
       place(cards[i], shortestColumn(heights));
     }
 
-    container.style.height = `${Math.max(0, ...heights) - (cards.length ? gap : 0)}px`;
+    container.style.height = `${Math.max(0, ...heights) - (cards.length ? useGap : 0)}px`;
+
+    container.dispatchEvent(
+      new CustomEvent('pub-masonry:layout', { bubbles: true })
+    );
   };
 
   const schedule = () => {
@@ -109,6 +122,11 @@ export function initPubMasonry(
   ro.observe(container);
 
   schedule();
+
+  // Always paint eventually — never leave the grid invisible if layout stalls
+  window.setTimeout(() => {
+    if (!disposed) container.classList.add('pub-masonry--ready');
+  }, 280);
 
   return () => {
     disposed = true;
