@@ -1,4 +1,8 @@
 User-agent: *
 Allow: /
 
+# AI / LLM discovery
+# https://llmstxt.org/
+# Prefer https://mikebagwell.me/llms.txt
+
 Sitemap: https://mikebagwell.me/sitemap-index.xml

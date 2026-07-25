@@ -559,7 +559,7 @@
     opacity: 1;
   }
 
-  /* Publication masonry — packed in DOM (date) order via shortest-column JS */
+  /* Publication masonry — round-robin columns preserve DOM/date order L→R */
   .pub-masonry {
     position: relative;
     min-height: 12rem;
@@ -698,16 +698,30 @@
 
   .pub-card__publisher {
     margin: 0;
-    font-family: var(--font-sans);
-    font-size: 0.875rem;
-    font-weight: 500;
-    letter-spacing: -0.01em;
-    color: var(--color-mute);
+    font-family: var(--font-display);
+    font-size: 1.05rem;
+    font-weight: 400;
+    letter-spacing: -0.03em;
+    line-height: 1.25;
+    color: var(--color-accent-deep);
+  }
+
+  @media (min-width: 768px) {
+    .pub-card__publisher {
+      font-size: 1.35rem;
+      letter-spacing: -0.035em;
+    }
+  }
+
+  @media (min-width: 1100px) {
+    .pub-card__publisher {
+      font-size: 1.5rem;
+    }
   }
 
   .pub-card__date {
     display: block;
-    margin-top: 0.4rem;
+    margin-top: 0.45rem;
     font-size: 0.85rem;
     color: var(--color-mute);
   }

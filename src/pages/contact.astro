@@ -3,11 +3,13 @@ import Base from '../layouts/Base.astro';
 
 // Web3Forms access key should be set as environment variable
 const accessKey = import.meta.env.WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE';
+const isSuccess = Astro.url.searchParams.get('success') === 'true';
 ---
 
-<Base 
-  title="Contact - Mike Bagwell"
-  description="Get in touch with Mike Bagwell"
+<Base
+  title="Contact | Mike Bagwell"
+  description="Contact Mike Bagwell for collaborations, readings, translation, design, or other inquiries."
+  noindex={isSuccess}
 >
   <div class="page-shell">
     <div class="max-w-2xl">
@@ -33,7 +35,7 @@ const accessKey = import.meta.env.WEB3FORMS_ACCESS_KEY || 'YOUR_ACCESS_KEY_HERE'
       <input type="checkbox" name="botcheck" class="hidden" style="display: none;" />
       
       <!-- Redirect after submission (optional) -->
-      <input type="hidden" name="redirect" value="https://mikebagwell.me/contact?success=true" />
+      <input type="hidden" name="redirect" value="https://mikebagwell.me/contact/?success=true" />
 
       <div>
         <label for="name" class="block text-sm font-semibold mb-2 text-[var(--color-ink)]">

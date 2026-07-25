@@ -1,17 +1,24 @@
 ---
-import { getCollection } from 'astro:content';
 import Gallery from '../components/Gallery.astro';
 import Base from '../layouts/Base.astro';
+import { collectionPageSchema } from '../lib/seo-schema';
 
-const publications = (await getCollection('publications'))
-  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
-
-const totalCount = publications.length;
+const pageUrl = 'https://mikebagwell.me/writing/';
+const title = 'Writing | Mike Bagwell';
+const description =
+  'Published poems and creative writing by Mike Bagwell in journals including Poetry Northwest, ITERANT, Lana Turner, and more.';
 ---
 
 <Base
-  title="Writing - Mike Bagwell"
-  description="Browse all published poems and creative work by Mike Bagwell"
+  title={title}
+  description={description}
+  schema={[
+    collectionPageSchema({
+      url: pageUrl,
+      name: title,
+      description,
+    }),
+  ]}
 >
   <div class="page-shell">
     <div class="reveal mb-12">

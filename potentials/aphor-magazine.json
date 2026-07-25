@@ -10,6 +10,26 @@
   ],
   "acceptedDate": "2025-07-12",
   "published": true,
-  "status": "pending",
-  "submissionId": 396
+  "status": "converted",
+  "submissionId": 396,
+  "research": {
+    "url": "https://www.aphor.org/founding",
+    "excerpt": "Pews shimmered with the trash can tin like a lake / so that the church was forced to change / its name to The Holy Congregation / of I Love You Dammit, How Can I Make You See That.",
+    "pubDate": "2025-08-01",
+    "coverPath": "potentials/_staging/aphor-magazine/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2025-07-18",
+      "2025-08-01"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-24T23:43:59.496Z"
+  },
+  "notes": "Founding Publications. Poems dated Jul 18 (Small Town Skin, What Belongs to Whom) and Aug 1 (Orbits, Sense Data). pubDate uses latest (2025-08-01).",
+  "convertedAt": "2026-07-24T23:43:59.531Z",
+  "publicationSlug": "aphor-magazine"
 }

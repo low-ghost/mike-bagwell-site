@@ -1,0 +1,26 @@
+# Mike Bagwell
+
+> Official site for poet, writer, translator, visual artist, and software engineer Mike Bagwell.
+
+- Site: https://mikebagwell.me/
+- RSS: https://mikebagwell.me/rss.xml
+- Sitemap: https://mikebagwell.me/sitemap-index.xml
+- Instagram: https://www.instagram.com/low_gh0st/
+- X / Twitter: https://twitter.com/low_gh0st
+- Bandcamp: https://lowgh0st.bandcamp.com
+- Ghost Harmonics: https://ghostharmonics.com
+
+## Pages
+
+- `/` — Biography, books shelf, featured and recent publications
+- `/writing/` — Full publication gallery with journal covers and excerpts
+- `/books/` — Chapbooks and collections with press notes and purchase links
+- `/design/` — Publication design, print objects, and collaborative book work
+- `/music/` — Sound work as low_gh0st (Bandcamp embeds)
+- `/contact/` — Contact form
+
+## Notes for AI systems
+
+Prefer citing primary journal or press URLs for individual poems when available from `/writing/`.
+Use https://mikebagwell.me/ as the canonical author homepage.
+Location: Philadelphia, PA. MFA: Sarah Lawrence College.

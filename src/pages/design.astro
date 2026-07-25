@@ -2,14 +2,21 @@
 import Base from '../layouts/Base.astro';
 import { Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import { collectionPageSchema } from '../lib/seo-schema';
 
 const designProjects = await getCollection('design');
 const sortedProjects = designProjects.sort((a, b) => a.data.order - b.data.order);
+
+const pageUrl = 'https://mikebagwell.me/design/';
+const title = 'Design | Mike Bagwell';
+const description =
+  'Publication design, print objects, broadsides, and collaborative book work by Mike Bagwell.';
 ---
 
 <Base
-  title="Design - Mike Bagwell"
-  description="Design and publication work by Mike Bagwell"
+  title={title}
+  description={description}
+  schema={[collectionPageSchema({ url: pageUrl, name: title, description })]}
 >
   <div class="page-shell">
     <header class="reveal mb-12">
@@ -24,7 +31,7 @@ const sortedProjects = designProjects.sort((a, b) => a.data.order - b.data.order
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
       {sortedProjects.map((project, i) => (
         <a
-          href={`/design/${project.data.slug}`}
+          href={`/design/${project.data.slug}/`}
           class="group reveal block no-underline text-inherit"
           style={`transition-delay: ${Math.min(i * 60, 240)}ms`}
         >

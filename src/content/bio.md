@@ -2,4 +2,4 @@ Mike Bagwell is a poet, software engineer, visual artist, and translator. He rec
 
 Recent chapbooks include [_Poem of Thanks: Swords and the Devil_](https://www.thirtywestph.com/shop/p/poemofthanksswordsandthedevil) (Thirty West 2026), [_Poem of Thanks: A Court of Wands_](https://metatron.press/digipub/poem-of-thanks/) (Metatron 2025), _A Collision of Soul in Midair_ (Bottlecap), and micros from [_Ghost City_](https://ghostcitypress.com/2024-summer-series/poem-of-thanks-the-high-priestess) and [_Rinky Dink_](https://rinky-dink-press.square.site/product/series-11/50).
 
-He runs the [Ghost Harmonics](https://ghostharmonics.com) reading series in Philly. Find him at [mikebagwell.me](http://mikebagwell.me/), [@low_gh0st](https://www.instagram.com/low_gh0st/), or playing dragons with his daughters.
+He runs the [Ghost Harmonics](https://ghostharmonics.com) reading series in Philly. Find him at [mikebagwell.me](https://mikebagwell.me/), [@low_gh0st](https://www.instagram.com/low_gh0st/), or playing dragons with his daughters.

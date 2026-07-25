@@ -1,6 +1,7 @@
 /**
- * Shortest-column masonry that preserves DOM order (left-to-right, top-to-bottom).
- * Use when CSS multi-column would scramble chronological reading order.
+ * Round-robin column masonry that preserves DOM/date order left-to-right.
+ * Shortest-column packing packs denser but scrambles chronological reading order
+ * when card heights differ — avoid that for publication grids.
  */
 
 export type MasonryOptions = {
@@ -42,20 +43,20 @@ export function initPubMasonry(
     container.classList.add('pub-masonry--ready');
     container.style.position = 'relative';
 
-    for (const card of cards) {
+    cards.forEach((card, i) => {
       card.style.position = 'absolute';
       card.style.width = `${colWidth}px`;
       card.style.marginBottom = '0';
       card.style.right = 'auto';
       card.style.bottom = 'auto';
 
-      const col = heights.indexOf(Math.min(...heights));
+      const col = i % cols;
       const x = col * (colWidth + gap);
       const y = heights[col];
       card.style.left = `${x}px`;
       card.style.top = `${y}px`;
       heights[col] += card.offsetHeight + gap;
-    }
+    });
 
     container.style.height = `${Math.max(0, ...heights) - (cards.length ? gap : 0)}px`;
   };

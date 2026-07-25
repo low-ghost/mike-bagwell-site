@@ -1,26 +1,42 @@
 ---
 import Seo from '../components/Seo.astro';
+import { jsonLdGraph, personSchema, websiteSchema } from '../lib/seo-schema';
 import '../styles/global.css';
 
 export interface Props {
   title?: string;
   description?: string;
   image?: string;
-  type?: 'website' | 'article';
+  imageAlt?: string;
+  type?: 'website' | 'article' | 'profile';
   publishedTime?: Date;
+  noindex?: boolean;
+  /** Extra JSON-LD nodes merged into @graph with Person + WebSite */
+  schema?: Record<string, unknown>[];
 }
 
-const { title, description, image, type, publishedTime } = Astro.props;
+const {
+  title,
+  description,
+  image,
+  imageAlt,
+  type,
+  publishedTime,
+  noindex,
+  schema = [],
+} = Astro.props;
 const path = Astro.url.pathname;
 
 const nav = [
   { href: '/', label: 'Home', match: (p: string) => p === '/' },
-  { href: '/writing', label: 'Writing', match: (p: string) => p.startsWith('/writing') },
-  { href: '/books', label: 'Books', match: (p: string) => p.startsWith('/books') },
-  { href: '/design', label: 'Design', match: (p: string) => p.startsWith('/design') },
-  { href: '/music', label: 'Music', match: (p: string) => p.startsWith('/music') },
-  { href: '/contact', label: 'Contact', match: (p: string) => p.startsWith('/contact') },
+  { href: '/writing/', label: 'Writing', match: (p: string) => p.startsWith('/writing') },
+  { href: '/books/', label: 'Books', match: (p: string) => p.startsWith('/books') },
+  { href: '/design/', label: 'Design', match: (p: string) => p.startsWith('/design') },
+  { href: '/music/', label: 'Music', match: (p: string) => p.startsWith('/music') },
+  { href: '/contact/', label: 'Contact', match: (p: string) => p.startsWith('/contact') },
 ];
+
+const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema]);
 ---
 
 <!doctype html>
@@ -30,8 +46,10 @@ const nav = [
       title={title}
       description={description}
       image={image}
+      imageAlt={imageAlt}
       type={type}
       publishedTime={publishedTime}
+      noindex={noindex}
     />
     <link
       rel="preload"
@@ -54,23 +72,7 @@ const nav = [
       type="font/woff2"
       crossorigin
     />
-    <script type="application/ld+json" set:html={JSON.stringify({
-      '@context': 'https://schema.org',
-      '@type': 'Person',
-      name: 'Mike Bagwell',
-      url: 'https://mikebagwell.me',
-      jobTitle: 'Writer & Software Engineer',
-      description: 'Poet, fiction writer, and software engineer',
-      sameAs: [
-        'https://www.instagram.com/low_gh0st/',
-        'https://twitter.com/low_gh0st',
-        'https://lowgh0st.bandcamp.com',
-      ],
-      alumniOf: {
-        '@type': 'CollegeOrUniversity',
-        name: 'Sarah Lawrence College',
-      },
-    })} />
+    <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
     <slot name="head" />
   </head>
   <body class="site-body antialiased">
@@ -143,9 +145,18 @@ const nav = [
       <footer class="mt-24 border-t border-[var(--color-line)]">
         <div class="site-rail py-12">
           <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-5">
-            <p class="text-sm font-semibold text-[var(--color-ink)]">
-              &copy; {new Date().getFullYear()} Mike Bagwell
-            </p>
+            <div class="space-y-3">
+              <p class="text-sm font-semibold text-[var(--color-ink)]">
+                &copy; {new Date().getFullYear()} Mike Bagwell
+              </p>
+              <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold text-[var(--color-mute)]" aria-label="Footer">
+                <a class="hover:text-[var(--color-ink)] transition-colors" href="/writing/">Writing</a>
+                <a class="hover:text-[var(--color-ink)] transition-colors" href="/books/">Books</a>
+                <a class="hover:text-[var(--color-ink)] transition-colors" href="/design/">Design</a>
+                <a class="hover:text-[var(--color-ink)] transition-colors" href="/music/">Music</a>
+                <a class="hover:text-[var(--color-ink)] transition-colors" href="/contact/">Contact</a>
+              </nav>
+            </div>
             <div class="flex flex-wrap items-center gap-2.5">
               <a
                 class="social-link"

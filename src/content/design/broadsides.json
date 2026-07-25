@@ -6,24 +6,20 @@
   "coverImage": "../../assets/design/broadsides/broadsides.jpeg",
   "images": [
     {
-      "path": "../../assets/design/broadsides/broadsides-00.jpeg",
+      "path": "../../assets/design/broadsides/broadsides-01.jpeg",
       "title": "Image 1"
     },
     {
-      "path": "../../assets/design/broadsides/broadsides-01.jpeg",
+      "path": "../../assets/design/broadsides/broadsides-02.jpeg",
       "title": "Image 2"
     },
     {
-      "path": "../../assets/design/broadsides/broadsides-02.jpeg",
+      "path": "../../assets/design/broadsides/broadsides-03.jpeg",
       "title": "Image 3"
     },
     {
-      "path": "../../assets/design/broadsides/broadsides-03.jpeg",
-      "title": "Image 4"
-    },
-    {
       "path": "../../assets/design/broadsides/broadsides-04.jpeg",
-      "title": "Image 5"
+      "title": "Image 4"
     }
   ],
   "externalUrl": null,

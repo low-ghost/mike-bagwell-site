@@ -53,7 +53,7 @@ const mediaRatio = `${image.width} / ${image.height}`;
   <div class="pub-card__media" style={`--media-ratio: ${mediaRatio}`}>
     <Picture
       src={image}
-      alt=""
+      alt={`${title} — published in ${publisher}`}
       formats={['webp']}
       fallbackFormat="jpg"
       widths={[420, 640, 900]}

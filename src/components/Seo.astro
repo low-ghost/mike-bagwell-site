@@ -3,56 +3,102 @@ export interface Props {
   title?: string;
   description?: string;
   image?: string;
+  imageAlt?: string;
+  imageWidth?: number;
+  imageHeight?: number;
   url?: string;
-  type?: 'website' | 'article';
+  type?: 'website' | 'article' | 'profile';
   publishedTime?: Date;
   author?: string;
+  noindex?: boolean;
 }
 
+const SITE_NAME = 'Mike Bagwell';
+const DEFAULT_DESCRIPTION =
+  'Mike Bagwell is a poet, software engineer, visual artist, and translator. He runs the Ghost Harmonics reading series and magazine in Philly.';
+const DEFAULT_TITLE = 'Mike Bagwell | Poet, Writer & Software Engineer';
+const DEFAULT_OG = '/og-image.jpg';
+
 const {
-  title = 'Mike Bagwell',
-  description = 'Mike Bagwell is a poet, software engineer, visual artist, and translator. He runs the Ghost Harmonics reading series and magazine in Philly.',
-  image = '/og-image.jpg',
-  url = Astro.url.pathname,
+  title = DEFAULT_TITLE,
+  description = DEFAULT_DESCRIPTION,
+  image = DEFAULT_OG,
+  imageAlt = 'Mike Bagwell — poet, writer, and software engineer',
+  imageWidth,
+  imageHeight,
+  url,
   type = 'website',
   publishedTime,
   author = 'Mike Bagwell',
+  noindex = false,
 } = Astro.props;
 
-const canonicalURL = new URL(url, Astro.site);
+/** Prefer trailing-slash canonicals to match Astro/Cloudflare output and the sitemap. */
+function canonicalize(pathname: string): string {
+  if (!pathname || pathname === '/') return '/';
+  const bare = pathname.split('?')[0].split('#')[0];
+  return bare.endsWith('/') ? bare : `${bare}/`;
+}
+
+const path = canonicalize(url ?? Astro.url.pathname);
+const canonicalURL = new URL(path, Astro.site);
 const imageURL = new URL(image, Astro.site);
+const isArticle = type === 'article';
+const isDefaultOg = image === DEFAULT_OG || image.endsWith('/og-image.jpg');
+const ogWidth = imageWidth ?? (isDefaultOg ? 1200 : undefined);
+const ogHeight = imageHeight ?? (isDefaultOg ? 630 : undefined);
+const ogType = image.endsWith('.png')
+  ? 'image/png'
+  : image.endsWith('.webp')
+    ? 'image/webp'
+    : 'image/jpeg';
 ---
 
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
+<meta name="theme-color" content="#0c0e12" />
+<meta name="author" content={author} />
+{noindex ? (
+  <meta name="robots" content="noindex, follow" />
+) : (
+  <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1, max-video-preview:-1" />
+)}
 <link rel="canonical" href={canonicalURL} />
 
 <title>{title}</title>
 <meta name="description" content={description} />
 
-<!-- OpenGraph -->
-<meta property="og:type" content={type} />
+<!-- Open Graph -->
+<meta property="og:type" content={type === 'profile' ? 'profile' : type} />
+<meta property="og:locale" content="en_US" />
 <meta property="og:url" content={canonicalURL} />
 <meta property="og:title" content={title} />
 <meta property="og:description" content={description} />
 <meta property="og:image" content={imageURL} />
-<meta property="og:site_name" content="Mike Bagwell" />
-{publishedTime && <meta property="article:published_time" content={publishedTime.toISOString()} />}
-{author && <meta property="article:author" content={author} />}
+<meta property="og:image:alt" content={imageAlt} />
+<meta property="og:image:type" content={ogType} />
+{ogWidth && <meta property="og:image:width" content={String(ogWidth)} />}
+{ogHeight && <meta property="og:image:height" content={String(ogHeight)} />}
+<meta property="og:site_name" content={SITE_NAME} />
+{isArticle && publishedTime && (
+  <meta property="article:published_time" content={publishedTime.toISOString()} />
+)}
+{isArticle && <meta property="article:author" content={author} />}
 
 <!-- Twitter Card -->
 <meta name="twitter:card" content="summary_large_image" />
+<meta name="twitter:site" content="@low_gh0st" />
+<meta name="twitter:creator" content="@low_gh0st" />
 <meta name="twitter:url" content={canonicalURL} />
 <meta name="twitter:title" content={title} />
 <meta name="twitter:description" content={description} />
 <meta name="twitter:image" content={imageURL} />
-<meta name="twitter:creator" content="@low_gh0st" />
+<meta name="twitter:image:alt" content={imageAlt} />
 
-<!-- Favicon -->
+<!-- Icons -->
 <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+<link rel="apple-touch-icon" href="/apple-touch-icon.png" sizes="180x180" />
 
-<!-- RSS -->
+<!-- Discovery -->
 <link rel="alternate" type="application/rss+xml" title="Mike Bagwell RSS" href="/rss.xml" />
-
-<!-- Sitemap -->
 <link rel="sitemap" type="application/xml" href="/sitemap-index.xml" />

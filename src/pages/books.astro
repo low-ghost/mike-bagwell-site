@@ -1,17 +1,45 @@
 ---
 import Base from '../layouts/Base.astro';
-import { Image } from 'astro:assets';
+import { Image, getImage } from 'astro:assets';
 import { getCollection } from 'astro:content';
 import { renderBioMarkdown } from '../lib/bio-markdown';
+import { bookListSchema, collectionPageSchema } from '../lib/seo-schema';
 
 const books = (await getCollection('books')).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
 );
+
+const pageUrl = 'https://mikebagwell.me/books/';
+const title = 'Books | Mike Bagwell';
+const description =
+  'Chapbooks and collections by Mike Bagwell, including Poem of Thanks and other published books from Thirty West, Metatron, Bottlecap, and more.';
+
+const schemaBooks = await Promise.all(
+  books.map(async (book) => {
+    const optimized = await getImage({
+      src: book.data.image,
+      width: 800,
+      format: 'jpg',
+    });
+    const href = book.data.url?.trim();
+    return {
+      title: book.data.title,
+      press: book.data.press,
+      pubDate: book.data.pubDate,
+      url: href && /^https?:\/\//i.test(href) ? href : undefined,
+      image: new URL(optimized.src, Astro.site).href,
+    };
+  })
+);
 ---
 
-<Base 
-  title="Books - Mike Bagwell"
-  description="Chapbooks and published collections by Mike Bagwell"
+<Base
+  title={title}
+  description={description}
+  schema={[
+    collectionPageSchema({ url: pageUrl, name: title, description }),
+    bookListSchema(schemaBooks),
+  ]}
 >
   <div class="page-shell">
     <header class="reveal mb-12">

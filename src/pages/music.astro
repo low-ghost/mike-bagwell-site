@@ -1,5 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
+import { collectionPageSchema } from '../lib/seo-schema';
 
 const tracks = [
   {
@@ -18,11 +19,17 @@ const tracks = [
     embed: 'https://bandcamp.com/EmbeddedPlayer/track=1757284466/size=large/bgcol=ffffff/linkcol=0687f5/tracklist=false/transparent=true/',
   },
 ];
+
+const pageUrl = 'https://mikebagwell.me/music/';
+const title = 'Music | Mike Bagwell (low_gh0st)';
+const description =
+  'Experimental music and sound work by Mike Bagwell as low_gh0st — tracks available on Bandcamp.';
 ---
 
 <Base
-  title="Music - Mike Bagwell"
-  description="Music by low_ghost — Bandcamp embeds"
+  title={title}
+  description={description}
+  schema={[collectionPageSchema({ url: pageUrl, name: title, description })]}
 >
   <div class="page-shell">
     <header class="reveal mb-12">

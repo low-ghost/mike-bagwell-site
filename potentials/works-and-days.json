@@ -10,6 +10,24 @@
   ],
   "acceptedDate": "2025-04-16",
   "published": true,
-  "status": "pending",
-  "submissionId": 379
+  "status": "converted",
+  "submissionId": 379,
+  "research": {
+    "url": "https://beautifuldayspress.com/wp-content/uploads/2025/12/WD-6.pdf",
+    "excerpt": "What I want to say is something / about the translucence of clouds / being damn near pornographic. / The mood shifts with subtle rains until / all that’s left is background radiation.",
+    "pubDate": "2025-12-21",
+    "coverPath": "potentials/_staging/works-and-days/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2025-12-21"
+    ],
+    "sources": [
+      "web-search",
+      "page"
+    ],
+    "researchedAt": "2026-07-24T23:26:47.989Z"
+  },
+  "notes": "Works & Days Vol. 6 (Winter 2025), Beautiful Days Press. WP media upload 2025-12-21. Cover: Teo González “Extrudge”.",
+  "convertedAt": "2026-07-24T23:27:57.867Z",
+  "publicationSlug": "works-and-days"
 }

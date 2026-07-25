@@ -29,7 +29,7 @@ async function generateRedirects() {
       
       redirects.push(`/writing/${slug} ${normalizedUrl} 301`);
     } else {
-      redirects.push(`/writing/${slug} /writing 301`);
+      redirects.push(`/writing/${slug} /writing/ 301`);
     }
   }
 
@@ -45,7 +45,7 @@ async function generateRedirects() {
     // which fights Cloudflare's /writing → /writing/ trailing-slash redirect
     // and causes a redirect loop.
     '# Catch-all fallback for unknown old slugs',
-    '/writing/:slug /writing 301',
+    '/writing/:slug /writing/ 301',
   ].join('\n');
 
   await writeFile(OUTPUT_FILE, redirectsContent);

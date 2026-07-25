@@ -7,6 +7,24 @@
   ],
   "acceptedDate": "2025-11-29",
   "published": true,
-  "status": "pending",
-  "submissionId": 440
+  "status": "converted",
+  "submissionId": 440,
+  "research": {
+    "url": "https://mcrb.neocities.org/naturallimits",
+    "excerpt": "you-were-thinking-the-word-intertwined-instead-of-passed-away-suppose-I-am-not-lost-is-the-way-through-and-the-beautiful-thing-is-that-we-can-keep-taking-and-then-giving-back-mountains-are-things-that-we-can-take-but-giving-them-back-will-require-more-of-ourselves-than-we-can-offer-",
+    "pubDate": "2026-02-27",
+    "coverPath": "potentials/_staging/michigan-city-review-of-books/cover.png",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-02-27"
+    ],
+    "sources": [
+      "web-search",
+      "page"
+    ],
+    "researchedAt": "2026-07-24T23:53:00.807Z"
+  },
+  "notes": "Online at MCRB neocities; archive lists 2/27/2026. Poem is one hyphenated continuum (no stanza breaks). Cover is page screenshot (no art on site). IG scrape failed.",
+  "convertedAt": "2026-07-24T23:53:45.397Z",
+  "publicationSlug": "michigan-city-review-of-books"
 }

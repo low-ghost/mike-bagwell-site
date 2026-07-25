@@ -68,7 +68,22 @@ function contentReloadPlugin() {
 
 export default defineConfig({
   site: 'https://mikebagwell.me',
-  integrations: [react(), sitemap(), mdx()],
+  trailingSlash: 'always',
+  compressHTML: true,
+  integrations: [
+    react(),
+    sitemap({
+      filter: (page) => !page.includes('?'),
+      serialize(item) {
+        // Prefer trailing-slash locs to match Cloudflare Pages and canonicals.
+        if (item.url && !item.url.endsWith('/')) {
+          item.url = `${item.url}/`;
+        }
+        return item;
+      },
+    }),
+    mdx(),
+  ],
   vite: {
     plugins: [tailwindcss(), contentReloadPlugin()],
   },
