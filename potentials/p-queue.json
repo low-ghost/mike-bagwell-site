@@ -11,6 +11,33 @@
   ],
   "acceptedDate": "2026-03-21",
   "published": true,
-  "status": "pending",
-  "submissionId": 540
+  "status": "converted",
+  "submissionId": 540,
+  "research": {
+    "url": "https://pqueue.wordpress.com/",
+    "excerpt": "-the-rent-will-be-leaflike-our-loveliest-friend-who-is-gone-to-molecules-say-we’re-falling-into-the-mouth-of-the-machine-or-returning-to-gales-during-orange-monuments-or-the-fire-skin-I’m-glad-to-touch-how-music-lasts-",
+    "pubDate": "2026-06-30",
+    "coverPath": "potentials/_staging/p-queue/cover.jpg",
+    "igPosts": [
+      {
+        "shortcode": "DaNdUvYjnyX",
+        "date": "2026-06-30",
+        "url": "https://www.instagram.com/p/DaNdUvYjnyX/",
+        "username": null,
+        "paths": []
+      }
+    ],
+    "dateCandidates": [
+      "2026-06-30"
+    ],
+    "sources": [
+      "web-search",
+      "ig",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T11:50:13.567Z"
+  },
+  "notes": "Print issue (Vol. 21 era); not in PDF archive / not online yet. URL = journal home linked from IG announce. pubDate from low_gh0st DaNdUvYjnyX (2026-06-30). Cover = issue cover photo from that post. Excerpt still needed from print.",
+  "convertedAt": "2026-07-25T11:50:13.605Z",
+  "publicationSlug": "p-queue"
 }

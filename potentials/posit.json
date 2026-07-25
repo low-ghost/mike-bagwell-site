@@ -8,8 +8,26 @@
   "pieceType": "micro",
   "acceptedDate": "2026-01-11",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 449,
   "venueUrl": "http://www.positjournal.com",
-  "notes": "Poem of Thanks: The Reversed Star"
+  "notes": "Poem of Thanks: The Reversed Star Cover = Posit logo. IG blocked.",
+  "research": {
+    "url": "https://positjournal.com/2026/06/07/mike-bagwell/",
+    "excerpt": "no one has died / will ever die / in fact I’m reviving / all of my dead / all of everyone’s / into a world / of meaning / thought I’d share / the good news",
+    "pubDate": "2026-06-07",
+    "coverPath": "potentials/_staging/posit/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-06-07"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T11:29:52.723Z"
+  },
+  "convertedAt": "2026-07-25T11:29:52.823Z",
+  "publicationSlug": "posit"
 }

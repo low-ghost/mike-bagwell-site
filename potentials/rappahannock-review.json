@@ -7,7 +7,26 @@
   ],
   "acceptedDate": "2025-12-26",
   "published": true,
-  "status": "pending",
+  "status": "skipped",
   "submissionId": 187,
-  "venueUrl": "http://rappahannockreview.com"
+  "venueUrl": "http://rappahannockreview.com",
+  "notes": "Already on site as src/content/publications/rappahannock-review.json (Issue 11.2 Spring 2024; WP date 2024-04-23; existing pubDate 2024-05-06). Potential acceptedDate 2025-12-26 is out of sync — duplicate queue entry.",
+  "research": {
+    "url": "https://rappahannockreview.com/issue-11-2/contents/poetry/mike-bagwell/",
+    "excerpt": "There are only a few ways to be dead and still / hurl insults at traffic or stars. I practice / the 3rd and 4th variations.",
+    "pubDate": "2024-05-06",
+    "coverPath": null,
+    "igPosts": [],
+    "dateCandidates": [
+      "2024-04-23",
+      "2024-05-06"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "existing-publication"
+    ],
+    "researchedAt": "2026-07-25T03:29:50.481Z",
+    "existingPublicationSlug": "rappahannock-review"
+  }
 }

@@ -1,13 +1,13 @@
 {
   "id": "tuesday-poem-fathers-day",
-  "title": "Father's Day (Tuesday Poem)",
-  "publisher": "Tuesday Poem",
+  "title": "Dusie",
+  "publisher": "Dusie",
   "pieces": [
     "Father's Day"
   ],
   "acceptedDate": "2025-12-24",
   "published": true,
-  "status": "researched",
+  "status": "converted",
   "submissionId": 512,
   "notes": "From Dusie/Rob McLennan packet (acceptedDate). Notes say published as Tuesday Poem ~June 23 — use research.pubDate for that. Cover = article screenshot (og:image was unrelated profile photo). IG blocked.",
   "research": {
@@ -25,5 +25,7 @@
       "user-excerpt"
     ],
     "researchedAt": "2026-07-25T01:06:38.840Z"
-  }
+  },
+  "convertedAt": "2026-07-25T11:29:52.788Z",
+  "publicationSlug": "tuesday-poem-fathers-day"
 }

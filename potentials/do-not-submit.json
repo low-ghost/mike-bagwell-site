@@ -11,7 +11,24 @@
   ],
   "acceptedDate": "2026-02-10",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 547,
-  "notes": "form sub, 2 weeks"
+  "notes": "form sub, 2 weeks Cover = article screenshot (page 403s to scrapers; WP JSON used). IG blocked.",
+  "research": {
+    "url": "https://donotsubmit.net/5-poems-by-mike-bagwell/",
+    "excerpt": "I lay down against the dialogue / and wake as the platonic ideal / of mouth movements, turn / the door into itself / by walking through it / fall infinitely through my life / along the x-axis. An honest living.",
+    "pubDate": "2026-02-12",
+    "coverPath": "potentials/_staging/do-not-submit/cover.png",
+    "igPosts": [],
+    "dateCandidates": [
+      "2026-02-12"
+    ],
+    "sources": [
+      "web-search",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T11:35:40.194Z"
+  },
+  "convertedAt": "2026-07-25T11:35:40.230Z",
+  "publicationSlug": "do-not-submit"
 }

@@ -11,7 +11,33 @@
   ],
   "acceptedDate": "2026-03-01",
   "published": true,
-  "status": "pending",
+  "status": "converted",
   "submissionId": 548,
-  "notes": "email [github pages]. all of em accepted"
+  "notes": "email [github pages]. all of em accepted Hosted at vat-tx.github.io/vat. pubDate from IG announce DVZde11ASB8. Cover = site logo.jpg.",
+  "research": {
+    "url": "https://vat-tx.github.io/vat/",
+    "excerpt": "The arc of Mechaskypenis is a tragic arc, / the plight of the machined shadow / in the palm of a great forest, / a dead forest, a forest of rot and emptiness. // Flames licked at the curtains inside him, fire / in his house, smoke in his childhood bedroom / too thick to see through for 18 summers.",
+    "pubDate": "2026-03-02",
+    "coverPath": "potentials/_staging/the-vat/cover.jpg",
+    "igPosts": [
+      {
+        "shortcode": "DVZde11ASB8",
+        "date": "2026-03-02",
+        "url": "https://www.instagram.com/p/DVZde11ASB8/",
+        "paths": []
+      }
+    ],
+    "dateCandidates": [
+      "2026-03-02"
+    ],
+    "sources": [
+      "web-search",
+      "page",
+      "ig",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-25T11:39:41.857Z"
+  },
+  "convertedAt": "2026-07-25T11:40:52.183Z",
+  "publicationSlug": "the-vat"
 }
