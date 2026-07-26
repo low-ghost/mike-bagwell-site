@@ -1,11 +1,6 @@
 ---
 import Seo from '../components/Seo.astro';
-import {
-  jsonLdGraph,
-  personSchema,
-  websiteSchema,
-  SAME_AS,
-} from '../lib/seo-schema';
+import { jsonLdGraph, personSchema, SAME_AS, websiteSchema } from '../lib/seo-schema';
 import '../styles/global.css';
 
 export interface Props {
@@ -79,7 +74,7 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
       crossorigin
     />
     <script type="application/ld+json" set:html={JSON.stringify(structuredData)} />
-    {/* Early JS flag for SEO-safe progressive enhancement (no-JS keeps content visible) */}
+    {/* Progressive enhancement flag — without JS, content stays visible */}
     <script is:inline>document.documentElement.classList.add('js');</script>
     <slot name="head" />
   </head>
@@ -158,11 +153,11 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
                 &copy; {new Date().getFullYear()} Mike Bagwell
               </p>
               <nav class="flex flex-wrap gap-x-4 gap-y-2 text-sm font-semibold text-[var(--color-mute)]" aria-label="Footer">
-                <a class="hover:text-[var(--color-ink)] transition-colors" href="/writing/">Writing</a>
-                <a class="hover:text-[var(--color-ink)] transition-colors" href="/books/">Books</a>
-                <a class="hover:text-[var(--color-ink)] transition-colors" href="/design/">Design</a>
-                <a class="hover:text-[var(--color-ink)] transition-colors" href="/music/">Music</a>
-                <a class="hover:text-[var(--color-ink)] transition-colors" href="/contact/">Contact</a>
+                {nav.filter((item) => item.href !== '/').map((item) => (
+                  <a class="hover:text-[var(--color-ink)] transition-colors" href={item.href}>
+                    {item.label}
+                  </a>
+                ))}
               </nav>
             </div>
             <div class="flex flex-wrap items-center gap-2.5">
@@ -211,10 +206,8 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
     </div>
 
     <script>
+      import { bindScrambleHover } from '../lib/scramble';
       import { initSiteMotion } from '../scripts/site-motion';
-
-      const SCRAMBLE =
-        'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789·';
 
       const bindNav = () => {
         const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');
@@ -251,44 +244,11 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
         });
       };
 
-      const bindBrandScramble = () => {
-        const brand = document.querySelector<HTMLElement>('[data-brand-scramble]');
-        if (!brand || brand.dataset.scrambleBound === '1') return;
-        if (!window.matchMedia('(hover: hover) and (pointer: fine)').matches) return;
-        if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) return;
-        brand.dataset.scrambleBound = '1';
-        const original = brand.textContent || '';
-        let raf = 0;
-        brand.addEventListener('mouseenter', () => {
-          let frame = 0;
-          cancelAnimationFrame(raf);
-          const run = () => {
-            frame++;
-            const progress = Math.min(1, frame / 16);
-            brand.textContent = original
-              .split('')
-              .map((ch, i) => {
-                if (ch === ' ') return ' ';
-                if (i / original.length < progress) return original[i];
-                return SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
-              })
-              .join('');
-            if (progress < 1) raf = requestAnimationFrame(run);
-            else brand.textContent = original;
-          };
-          raf = requestAnimationFrame(run);
-        });
-      };
-
-      const boot = () => {
-        document.body.classList.remove('nav-open');
-        bindNav();
-        bindBrandScramble();
-        initSiteMotion();
-      };
-
-      // Static site: full document load only (no Astro ClientRouter / view transitions)
-      boot();
+      document.body.classList.remove('nav-open');
+      bindNav();
+      const brand = document.querySelector<HTMLElement>('[data-brand-scramble]');
+      if (brand) bindScrambleHover(brand, { frames: 16 });
+      initSiteMotion();
     </script>
   </body>
 </html>

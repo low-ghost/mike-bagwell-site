@@ -112,6 +112,22 @@
     -moz-osx-font-smoothing: grayscale;
   }
 
+  /* Explicit pointer — Safari and reset styles often leave buttons as default */
+  a[href],
+  button:not(:disabled),
+  [role="button"]:not([aria-disabled="true"]),
+  summary,
+  input[type="submit"]:not(:disabled),
+  input[type="button"]:not(:disabled),
+  label[for] {
+    cursor: pointer;
+  }
+
+  button:disabled,
+  [aria-disabled="true"] {
+    cursor: not-allowed;
+  }
+
   ::selection {
     background: color-mix(in oklab, var(--color-accent) 35%, transparent);
     color: #0c0e12;
@@ -165,15 +181,13 @@
     .carousel-nav:active,
     .social-link:active,
     .featured-carousel__slide.is-fading,
+    .featured-carousel__slide.is-entering,
     .ui-dialog__panel,
     .contact-success {
       transform: none !important;
       filter: none !important;
     }
 
-    .animate-fade-up,
-    .animate-fade-in,
-    .stagger-in > *,
     .reveal.is-visible .book-tile,
     .reveal.is-visible .pub-card {
       animation: none !important;
@@ -546,15 +560,6 @@
     line-height: 1.7;
   }
 
-  .eyebrow {
-    font-family: var(--font-sans);
-    font-size: 0.7rem;
-    font-weight: 600;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--color-accent-deep);
-  }
-
   .btn-primary {
     display: inline-flex;
     align-items: center;
@@ -567,7 +572,9 @@
     font-size: 0.95rem;
     letter-spacing: -0.01em;
     text-decoration: none;
+    border: 0;
     border-radius: 2px;
+    cursor: pointer;
     transition: transform 160ms var(--ease-out), background 200ms ease;
   }
 
@@ -594,6 +601,7 @@
     text-decoration: none;
     border-bottom: 2px solid var(--color-accent);
     padding-bottom: 0.15rem;
+    cursor: pointer;
   }
 
   .btn-ghost:hover {
@@ -645,6 +653,7 @@
     background: var(--color-panel);
     color: var(--color-ink);
     font-size: 0.95rem;
+    cursor: pointer;
     transition:
       background 180ms ease,
       color 180ms ease,
@@ -680,37 +689,28 @@
 
   /* One-shot stagger inside revealed sections (decorative, never blocks) */
   .reveal.is-visible .book-tile,
-  .reveal.is-visible .pub-card,
-  .reveal.is-visible.stagger-in > * {
+  .reveal.is-visible .pub-card {
     animation: fade-up 280ms var(--ease-out) both;
   }
 
   .reveal.is-visible .book-tile:nth-child(1),
-  .reveal.is-visible .pub-card:nth-child(1),
-  .reveal.is-visible.stagger-in > *:nth-child(1) { animation-delay: 0ms; }
+  .reveal.is-visible .pub-card:nth-child(1) { animation-delay: 0ms; }
   .reveal.is-visible .book-tile:nth-child(2),
-  .reveal.is-visible .pub-card:nth-child(2),
-  .reveal.is-visible.stagger-in > *:nth-child(2) { animation-delay: 40ms; }
+  .reveal.is-visible .pub-card:nth-child(2) { animation-delay: 40ms; }
   .reveal.is-visible .book-tile:nth-child(3),
-  .reveal.is-visible .pub-card:nth-child(3),
-  .reveal.is-visible.stagger-in > *:nth-child(3) { animation-delay: 80ms; }
+  .reveal.is-visible .pub-card:nth-child(3) { animation-delay: 80ms; }
   .reveal.is-visible .book-tile:nth-child(4),
-  .reveal.is-visible .pub-card:nth-child(4),
-  .reveal.is-visible.stagger-in > *:nth-child(4) { animation-delay: 120ms; }
+  .reveal.is-visible .pub-card:nth-child(4) { animation-delay: 120ms; }
   .reveal.is-visible .book-tile:nth-child(5),
-  .reveal.is-visible .pub-card:nth-child(5),
-  .reveal.is-visible.stagger-in > *:nth-child(5) { animation-delay: 160ms; }
+  .reveal.is-visible .pub-card:nth-child(5) { animation-delay: 160ms; }
   .reveal.is-visible .book-tile:nth-child(6),
-  .reveal.is-visible .pub-card:nth-child(6),
-  .reveal.is-visible.stagger-in > *:nth-child(6) { animation-delay: 200ms; }
+  .reveal.is-visible .pub-card:nth-child(6) { animation-delay: 200ms; }
   .reveal.is-visible .book-tile:nth-child(n + 7),
-  .reveal.is-visible .pub-card:nth-child(n + 7),
-  .reveal.is-visible.stagger-in > *:nth-child(n + 7) { animation-delay: 240ms; }
+  .reveal.is-visible .pub-card:nth-child(n + 7) { animation-delay: 240ms; }
 
   /* GSAP owns these when motion boots */
   html.motion-ready .reveal.is-visible .book-tile,
-  html.motion-ready .reveal.is-visible .pub-card,
-  html.motion-ready .reveal.is-visible.stagger-in > * {
+  html.motion-ready .reveal.is-visible .pub-card {
     animation: none;
   }
 
@@ -815,6 +815,10 @@
     transition: box-shadow 280ms ease;
   }
 
+  a.pub-card {
+    cursor: pointer;
+  }
+
   .pub-card:focus-visible {
     box-shadow: 0 22px 40px -24px rgba(0, 0, 0, 0.75);
   }
@@ -887,8 +891,8 @@
     }
 
     .pub-card__excerpt p {
-      font-size: 0.8rem;
-      line-height: 1.4;
+      font-size: 0.9rem;
+      line-height: 1.45;
       -webkit-line-clamp: 5;
     }
 
@@ -917,8 +921,8 @@
 
   .pub-card__excerpt p {
     font-family: var(--font-poem);
-    font-size: 1.05rem;
-    line-height: 1.45;
+    font-size: 1.2rem;
+    line-height: 1.5;
     color: #ffffff;
     display: -webkit-box;
     -webkit-line-clamp: 7;
@@ -1038,6 +1042,7 @@
     scroll-snap-align: start;
     text-decoration: none;
     color: inherit;
+    cursor: pointer;
     transition: transform 280ms var(--ease-site);
     transform-style: preserve-3d;
   }
@@ -1104,6 +1109,7 @@
     border: 1px solid var(--color-line);
     border-radius: 2px;
     background: var(--color-panel);
+    cursor: pointer;
     transition:
       color 180ms ease,
       border-color 180ms ease,
@@ -1163,11 +1169,20 @@
     pointer-events: none;
   }
 
+  .featured-carousel__slide.is-entering {
+    opacity: 0;
+    transform: translateX(calc(var(--slide-dir, 1) * 10px)) scale(0.985);
+    filter: blur(1px);
+  }
+
   .featured-carousel__dot {
     height: 0.375rem;
     flex: 1;
+    border: 0;
+    padding: 0;
     border-radius: 999px;
     background: var(--color-line);
+    cursor: pointer;
     transition: background-color 180ms ease, transform 160ms var(--ease-out);
   }
 
@@ -1252,6 +1267,7 @@
     color: var(--color-mute);
     font-size: 1.5rem;
     line-height: 1;
+    cursor: pointer;
     transition:
       color 180ms ease,
       border-color 180ms ease,
@@ -1432,6 +1448,13 @@
     letter-spacing: -0.03em;
     color: var(--color-ink-soft);
     white-space: nowrap;
+    text-decoration: none;
+    transition: color 180ms ease;
+  }
+
+  a.journal-marquee__item:hover,
+  a.journal-marquee__item:focus-visible {
+    color: var(--color-accent-deep);
   }
 
   .journal-marquee__item::after {
@@ -1474,11 +1497,6 @@
   }
 }
 
-@keyframes fade-in {
-  from { opacity: 0; }
-  to { opacity: 1; }
-}
-
 @keyframes success-pop {
   from {
     opacity: 0;
@@ -1494,14 +1512,6 @@
   0% { transform: translateX(-70%) rotate(12deg); }
   45% { transform: translateX(70%) rotate(12deg); }
   100% { transform: translateX(70%) rotate(12deg); }
-}
-
-.animate-fade-up {
-  animation: fade-up 480ms var(--ease-site) both;
-}
-
-.animate-fade-in {
-  animation: fade-in 220ms ease both;
 }
 
 .sr-only {
@@ -1555,6 +1565,7 @@
   color: var(--color-accent-deep);
   text-decoration: underline;
   text-underline-offset: 3px;
+  cursor: pointer;
 }
 
 .prose a:hover {

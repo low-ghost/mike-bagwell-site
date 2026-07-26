@@ -1,10 +1,9 @@
 #!/usr/bin/env node
 
-import { writeFile, copyFile, mkdir } from 'fs/promises';
-import { join, extname } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
+import { copyFile, mkdir, writeFile } from 'fs/promises';
+import { dirname, extname, join } from 'path';
 import readline from 'readline';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

@@ -1,7 +1,8 @@
-import rss from '@astrojs/rss';
 import { getCollection } from 'astro:content';
+import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
 import { squarespaceGuidFromArchivedBody } from '../lib/squarespace-guid';
+import { normalizeHttpUrl } from '../lib/urls';
 
 export async function GET(context: APIContext) {
   const publications = await getCollection('publications');
@@ -17,13 +18,8 @@ export async function GET(context: APIContext) {
     description: 'Poetry and creative work by Mike Bagwell',
     site: siteUrl,
     items: sortedPublications.map((pub) => {
-      const url =
-        pub.data.url && pub.data.url.trim() !== ''
-          ? pub.data.url.startsWith('http')
-            ? pub.data.url
-            : `https://${pub.data.url}`
-          : `${siteUrl}writing#${pub.id}`;
-
+      const external = normalizeHttpUrl(pub.data.url ?? '');
+      const url = external || `${siteUrl}writing#${pub.id}`;
       const squarespaceGuid = squarespaceGuidFromArchivedBody(pub.data.archivedBody);
 
       return {
@@ -31,8 +27,7 @@ export async function GET(context: APIContext) {
         pubDate: pub.data.pubDate,
         description: `Published in ${pub.data.publisher}`,
         link: url,
-        // Override Astro's default link-based guid so existing Squarespace subscribers
-        // don't get a flood of "new" items after cutover.
+        // Keep Squarespace guids so existing subscribers don't see a flood of "new" items.
         ...(squarespaceGuid
           ? { customData: `<guid isPermaLink="false">${squarespaceGuid}</guid>` }
           : {}),

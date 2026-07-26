@@ -8,12 +8,11 @@
  * Moves the cover into src/assets/books/ and writes src/content/books/<slug>.json.
  */
 
-import { writeFile, mkdir, rename, copyFile, unlink } from 'fs/promises';
-import { join, extname, resolve } from 'path';
-import { fileURLToPath } from 'url';
-import { dirname } from 'path';
 import { existsSync } from 'fs';
+import { copyFile, mkdir, rename, unlink, writeFile } from 'fs/promises';
+import { dirname, extname, join, resolve } from 'path';
 import readline from 'readline';
+import { fileURLToPath } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);

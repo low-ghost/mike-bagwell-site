@@ -20,6 +20,7 @@ export function ModalTrigger({ title, publisher, archivedBody }: ModalTriggerPro
   return (
     <>
       <button
+        type="button"
         onClick={() => setIsOpen(true)}
         className="absolute inset-0 w-full h-full cursor-pointer"
         aria-label={`View archived content for ${title}`}

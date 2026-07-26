@@ -1,8 +1,8 @@
 ---
-import Base from '../layouts/Base.astro';
-import KineticText from '../components/KineticText.astro';
 import { Picture } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import KineticText from '../components/KineticText.astro';
+import Base from '../layouts/Base.astro';
 import { collectionPageSchema } from '../lib/seo-schema';
 
 const designProjects = await getCollection('design');

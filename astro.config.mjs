@@ -1,11 +1,10 @@
-import { defineConfig } from 'astro/config';
+import { utimes } from 'node:fs/promises';
+import path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import react from '@astrojs/react';
 import sitemap from '@astrojs/sitemap';
-import mdx from '@astrojs/mdx';
 import tailwindcss from '@tailwindcss/vite';
-import path from 'node:path';
-import { utimes } from 'node:fs/promises';
-import { fileURLToPath } from 'node:url';
+import { defineConfig } from 'astro/config';
 
 const rootDir = path.dirname(fileURLToPath(import.meta.url));
 const contentDir = path.join(rootDir, 'src/content');
@@ -33,10 +32,7 @@ function contentReloadPlugin() {
       const onContentChange = (file) => {
         if (touching) return;
         const normalized = path.normalize(file);
-        if (
-          !normalized.startsWith(contentDir) &&
-          !normalized.startsWith(assetsDir)
-        ) {
+        if (!normalized.startsWith(contentDir) && !normalized.startsWith(assetsDir)) {
           return;
         }
         // Ignore our own page touches
@@ -84,7 +80,6 @@ export default defineConfig({
         return item;
       },
     }),
-    mdx(),
   ],
   vite: {
     plugins: [tailwindcss(), contentReloadPlugin()],

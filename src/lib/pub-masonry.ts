@@ -44,10 +44,7 @@ function measureWidth(container: HTMLElement): number {
   return Math.max(0, Math.floor(container.clientWidth || rect));
 }
 
-export function initPubMasonry(
-  container: HTMLElement,
-  options: MasonryOptions = {}
-): () => void {
+export function initPubMasonry(container: HTMLElement, options: MasonryOptions = {}): () => void {
   const minColWidth = options.minColWidth ?? 240;
   const gap = options.gap ?? 24;
   let frame = 0;
@@ -55,8 +52,7 @@ export function initPubMasonry(
 
   const items = () =>
     Array.from(container.children).filter(
-      (el): el is HTMLElement =>
-        el instanceof HTMLElement && el.classList.contains('pub-card')
+      (el): el is HTMLElement => el instanceof HTMLElement && el.classList.contains('pub-card')
     );
 
   const layout = () => {
@@ -111,9 +107,7 @@ export function initPubMasonry(
       if (isMobile) {
         // left = col * (colWidth + gap) expressed in calc so it tracks 100%
         card.style.left =
-          col === 0
-            ? '0px'
-            : `calc(((100% - ${totalGap}px) / ${cols} + ${useGap}px) * ${col})`;
+          col === 0 ? '0px' : `calc(((100% - ${totalGap}px) / ${cols} + ${useGap}px) * ${col})`;
       } else {
         card.style.left = `${col * (desktopColWidth + useGap)}px`;
       }
@@ -136,9 +130,7 @@ export function initPubMasonry(
 
     container.style.height = `${Math.max(0, ...heights) - (cards.length ? useGap : 0)}px`;
 
-    container.dispatchEvent(
-      new CustomEvent('pub-masonry:layout', { bubbles: true })
-    );
+    container.dispatchEvent(new CustomEvent('pub-masonry:layout', { bubbles: true }));
   };
 
   const schedule = () => {

@@ -1,4 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { prefersReducedMotion } from '../lib/motion-pref';
+import { useDialogPresence } from './ui/useDialogPresence';
 
 export interface LightboxImage {
   src: string;
@@ -10,17 +12,8 @@ interface ImageLightboxProps {
   images: LightboxImage[];
 }
 
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
-
 export function ImageLightbox({ images }: ImageLightboxProps) {
   const [openIndex, setOpenIndex] = useState<number | null>(null);
-  const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
   const [displayIndex, setDisplayIndex] = useState(0);
   const [swapping, setSwapping] = useState(false);
   const swapTimer = useRef<number | null>(null);
@@ -29,21 +22,15 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
 
   displayIndexRef.current = displayIndex;
   const isOpen = openIndex !== null;
+  const { mounted, visible, stateClass, handleTransitionEnd } = useDialogPresence(isOpen);
 
   const close = useCallback(() => setOpenIndex(null), []);
 
   useEffect(() => {
-    if (isOpen) {
-      setMounted(true);
-      setDisplayIndex(openIndex!);
-      displayIndexRef.current = openIndex!;
-      setSwapping(false);
-      const id = requestAnimationFrame(() => {
-        requestAnimationFrame(() => setVisible(true));
-      });
-      return () => cancelAnimationFrame(id);
-    }
-    setVisible(false);
+    if (!isOpen || openIndex === null) return;
+    setDisplayIndex(openIndex);
+    displayIndexRef.current = openIndex;
+    setSwapping(false);
   }, [isOpen, openIndex]);
 
   const commitSwap = useCallback(() => {
@@ -60,8 +47,7 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
     (delta: number) => {
       if (openIndex === null || images.length === 0) return;
       const current = displayIndexRef.current;
-      const next =
-        ((current + delta) % images.length + images.length) % images.length;
+      const next = (((current + delta) % images.length) + images.length) % images.length;
       if (next === current) return;
 
       if (prefersReducedMotion()) {
@@ -105,13 +91,7 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
     };
   }, []);
 
-  const handleShellTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
-    if (e.target !== e.currentTarget) return;
-    if (!isOpen && !visible) setMounted(false);
-  };
-
   const current = images[displayIndex];
-  const stateClass = visible ? ' is-open' : ' is-closing';
 
   return (
     <>
@@ -146,7 +126,7 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
           aria-modal="true"
           aria-label={current.alt}
           onClick={close}
-          onTransitionEnd={handleShellTransitionEnd}
+          onTransitionEnd={handleTransitionEnd}
         >
           <button
             type="button"
@@ -184,10 +164,7 @@ export function ImageLightbox({ images }: ImageLightboxProps) {
             </>
           )}
 
-          <figure
-            className="lightbox-figure"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <figure className="lightbox-figure" onClick={(e) => e.stopPropagation()}>
             <img
               src={current.src}
               srcSet={current.srcSet}

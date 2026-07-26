@@ -1,23 +1,14 @@
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { finePointer, prefersReducedMotion } from '../lib/motion-pref';
+import { bindScrambleHover } from '../lib/scramble';
 
 gsap.registerPlugin(ScrollTrigger);
-
-const SCRAMBLE =
-  'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789·/';
 
 let ctx: gsap.Context | null = null;
 let masonryLayoutHandler: ((e: Event) => void) | null = null;
 let safetyTimer = 0;
 let excerptFocusCleanup: (() => void) | null = null;
-
-function prefersReducedMotion(): boolean {
-  return window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-}
-
-function finePointer(): boolean {
-  return window.matchMedia('(hover: hover) and (pointer: fine)').matches;
-}
 
 /** Always leave type readable — never rely on CSS opacity:0 for kinetic. */
 function revealKinetic(root?: ParentNode) {
@@ -31,7 +22,6 @@ function revealKinetic(root?: ParentNode) {
 }
 
 function showAllContent() {
-  document.documentElement.classList.remove('motion-pending');
   document.documentElement.classList.remove('motion-ready');
   revealKinetic();
   document.querySelectorAll('.reveal').forEach((el) => {
@@ -76,7 +66,6 @@ function animateKineticBlock(root: HTMLElement, immediate: boolean) {
     return;
   }
 
-  // immediateRender: false keeps text visible until the trigger fires
   gsap.fromTo(inners, from, {
     ...to,
     immediateRender: false,
@@ -85,39 +74,6 @@ function animateKineticBlock(root: HTMLElement, immediate: boolean) {
       start: 'top 90%',
       once: true,
     },
-  });
-}
-
-function bindScramble(root: HTMLElement) {
-  if (!finePointer() || root.dataset.scrambleBound === '1') return;
-  root.dataset.scrambleBound = '1';
-
-  const targets = root.querySelectorAll<HTMLElement>('.kinetic__inner[data-text]');
-  targets.forEach((el) => {
-    const original = el.dataset.text || el.textContent || '';
-    let frame = 0;
-    let raf = 0;
-
-    const run = () => {
-      frame++;
-      const progress = Math.min(1, frame / 14);
-      el.textContent = original
-        .split('')
-        .map((ch, i) => {
-          if (ch === ' ') return ' ';
-          if (i / original.length < progress) return original[i];
-          return SCRAMBLE[(Math.random() * SCRAMBLE.length) | 0];
-        })
-        .join('');
-      if (progress < 1) raf = requestAnimationFrame(run);
-      else el.textContent = original;
-    };
-
-    el.addEventListener('mouseenter', () => {
-      cancelAnimationFrame(raf);
-      frame = 0;
-      raf = requestAnimationFrame(run);
-    });
   });
 }
 
@@ -147,6 +103,11 @@ function enterPubCard(card: HTMLElement) {
   window.setTimeout(done, 1100);
 }
 
+function cardInViewport(card: HTMLElement, vh: number) {
+  const r = card.getBoundingClientRect();
+  return r.top < vh * 0.98 && r.bottom > 40;
+}
+
 function bindMasonryCards(container: HTMLElement) {
   if (container.dataset.masonryMotion === '1') return;
   container.dataset.masonryMotion = '1';
@@ -158,8 +119,7 @@ function bindMasonryCards(container: HTMLElement) {
     const vh = window.innerHeight;
     cards.forEach((card) => {
       if (card.classList.contains('pub-card--in')) return;
-      const r = card.getBoundingClientRect();
-      if (r.top < vh * 0.98 && r.bottom > 40) enterPubCard(card);
+      if (cardInViewport(card, vh)) enterPubCard(card);
     });
   };
 
@@ -180,14 +140,9 @@ function bindMasonryCards(container: HTMLElement) {
   );
 
   cards.forEach((card) => io.observe(card));
-
-  revealVisible();
-  requestAnimationFrame(() => {
-    revealVisible();
-    requestAnimationFrame(revealVisible);
-  });
-
-  window.setTimeout(() => cards.forEach(enterPubCard), 2500);
+  requestAnimationFrame(revealVisible);
+  // Catch cards that were above the fold before IO fired
+  window.setTimeout(() => cards.forEach(enterPubCard), 2000);
 }
 
 function watchMasonry() {
@@ -203,17 +158,19 @@ function watchMasonry() {
 
   masonryLayoutHandler = (e: Event) => {
     const target = e.target;
-    if (target instanceof HTMLElement && target.hasAttribute('data-pub-masonry')) {
-      if (!target.dataset.masonryMotion) bindMasonryCards(target);
-      else {
-        // Relayout can move cards into view — reveal any still waiting
-        const vh = window.innerHeight;
-        target.querySelectorAll<HTMLElement>('.pub-card:not(.pub-card--in):not(.pub-card--settled)').forEach((card) => {
-          const r = card.getBoundingClientRect();
-          if (r.top < vh * 0.98 && r.bottom > 40) enterPubCard(card);
-        });
-      }
+    if (!(target instanceof HTMLElement) || !target.hasAttribute('data-pub-masonry')) return;
+
+    if (!target.dataset.masonryMotion) {
+      bindMasonryCards(target);
+      return;
     }
+
+    const vh = window.innerHeight;
+    target
+      .querySelectorAll<HTMLElement>('.pub-card:not(.pub-card--in):not(.pub-card--settled)')
+      .forEach((card) => {
+        if (cardInViewport(card, vh)) enterPubCard(card);
+      });
   };
   document.addEventListener('pub-masonry:layout', masonryLayoutHandler);
 }
@@ -221,23 +178,22 @@ function watchMasonry() {
 function revealSection(section: HTMLElement) {
   section.classList.add('is-visible');
   const kids = section.querySelectorAll<HTMLElement>('.book-tile, .stagger-child');
-  if (kids.length) {
-    gsap.fromTo(
-      kids,
-      { y: 28, opacity: 0 },
-      {
-        y: 0,
-        opacity: 1,
-        duration: 0.65,
-        stagger: 0.05,
-        ease: 'power3.out',
-        overwrite: 'auto',
-      }
-    );
-  }
+  if (!kids.length) return;
+
+  gsap.fromTo(
+    kids,
+    { y: 28, opacity: 0 },
+    {
+      y: 0,
+      opacity: 1,
+      duration: 0.65,
+      stagger: 0.05,
+      ease: 'power3.out',
+      overwrite: 'auto',
+    }
+  );
 }
 
-/** Smoothstep 0→1 for scroll-scrubbed excerpt progress */
 function smoothstep(t: number): number {
   const x = Math.min(1, Math.max(0, t));
   return x * x * (3 - 2 * x);
@@ -250,15 +206,18 @@ function bindMobileExcerptFocus() {
   const mq = window.matchMedia('(max-width: 767px)');
   if (!mq.matches) return;
 
-  /** Displayed progress (lerped) vs scroll target — lag = slower reveal */
   const display = new Map<HTMLElement, number>();
+  let cards = Array.from(document.querySelectorAll<HTMLElement>('.pub-card')).filter((c) =>
+    c.querySelector('.pub-card__excerpt')
+  );
   let raf = 0;
   let running = false;
 
-  const cardsWithExcerpt = () =>
-    Array.from(document.querySelectorAll<HTMLElement>('.pub-card')).filter((c) =>
+  const refreshCards = () => {
+    cards = Array.from(document.querySelectorAll<HTMLElement>('.pub-card')).filter((c) =>
       c.querySelector('.pub-card__excerpt')
     );
+  };
 
   const clearProgress = (card: HTMLElement) => {
     card.style.removeProperty('--excerpt-progress');
@@ -267,7 +226,7 @@ function bindMobileExcerptFocus() {
   };
 
   const clearAll = () => {
-    cardsWithExcerpt().forEach(clearProgress);
+    cards.forEach(clearProgress);
     display.clear();
   };
 
@@ -278,7 +237,6 @@ function bindMobileExcerptFocus() {
     const vh = window.innerHeight;
     const vw = window.innerWidth;
     const focusY = vh * 0.42;
-    // Extra-wide band: long scroll distance to fully reveal
     const band = vh * 0.72;
     const focusX = vw * 0.5;
 
@@ -286,7 +244,7 @@ function bindMobileExcerptFocus() {
     let bestDistY = Infinity;
     let bestKey = Infinity;
 
-    for (const card of cardsWithExcerpt()) {
+    for (const card of cards) {
       const media = card.querySelector<HTMLElement>('.pub-card__media') || card;
       const r = media.getBoundingClientRect();
       if (r.bottom < -vh * 0.15 || r.top > vh * 1.15) continue;
@@ -304,8 +262,7 @@ function bindMobileExcerptFocus() {
 
     if (best && bestDistY <= band) {
       const linear = 1 - bestDistY / band;
-      // Soft early ramp — full opacity only when very near center
-      targets.set(best, Math.pow(smoothstep(linear), 2.1));
+      targets.set(best, smoothstep(linear) ** 2.1);
     }
 
     return targets;
@@ -330,7 +287,6 @@ function bindMobileExcerptFocus() {
     }
 
     const targets = computeTargets();
-    // Very slow chase (~0.5s+ to settle after scroll stops)
     const lerp = prefersReducedMotion() ? 1 : 0.032;
     let needsMore = false;
     const seen = new Set<HTMLElement>();
@@ -374,19 +330,27 @@ function bindMobileExcerptFocus() {
       if (raf) cancelAnimationFrame(raf);
       raf = 0;
     } else {
+      refreshCards();
       kick();
     }
+  };
+
+  const onMasonryLayout = () => {
+    refreshCards();
+    kick();
   };
 
   window.addEventListener('scroll', kick, { passive: true });
   window.addEventListener('resize', kick, { passive: true });
   mq.addEventListener('change', onMq);
+  document.addEventListener('pub-masonry:layout', onMasonryLayout);
   kick();
 
   excerptFocusCleanup = () => {
     window.removeEventListener('scroll', kick);
     window.removeEventListener('resize', kick);
     mq.removeEventListener('change', onMq);
+    document.removeEventListener('pub-masonry:layout', onMasonryLayout);
     if (raf) cancelAnimationFrame(raf);
     raf = 0;
     running = false;
@@ -411,16 +375,10 @@ export function teardownSiteMotion() {
   document.querySelectorAll<HTMLElement>('[data-pub-masonry]').forEach((el) => {
     delete el.dataset.masonryMotion;
   });
-  document.querySelectorAll('.cursor-glow').forEach((el) => el.remove());
 }
 
-/**
- * Full-page-load motion only. This site is Astro `output: 'static'` —
- * no ClientRouter / view transitions. Each navigation is a fresh document.
- */
 export function initSiteMotion() {
   teardownSiteMotion();
-  document.documentElement.classList.remove('motion-pending');
 
   if (prefersReducedMotion()) {
     showAllContent();
@@ -428,171 +386,179 @@ export function initSiteMotion() {
     return;
   }
 
-  try {
-    ctx = gsap.context(() => {
-      document.querySelectorAll<HTMLElement>('[data-kinetic]').forEach((el) => {
-        const when = el.dataset.kineticWhen || 'scroll';
-        animateKineticBlock(el, when === 'load');
-        if (el.dataset.scramble === 'true') bindScramble(el);
-      });
+  ctx = gsap.context(() => {
+    document.querySelectorAll<HTMLElement>('[data-kinetic]').forEach((el) => {
+      const when = el.dataset.kineticWhen || 'scroll';
+      animateKineticBlock(el, when === 'load');
+      if (el.dataset.scramble === 'true') {
+        el.querySelectorAll<HTMLElement>('.kinetic__inner[data-text]').forEach((inner) => {
+          bindScrambleHover(inner);
+        });
+      }
+    });
 
-      document.querySelectorAll<HTMLElement>('.reveal:not(.is-visible)').forEach((section) => {
-        const top = section.getBoundingClientRect().top;
-        if (top < window.innerHeight * 0.92) {
-          revealSection(section);
-          return;
+    document.querySelectorAll<HTMLElement>('.reveal:not(.is-visible)').forEach((section) => {
+      const top = section.getBoundingClientRect().top;
+      if (top < window.innerHeight * 0.92) {
+        revealSection(section);
+        return;
+      }
+      ScrollTrigger.create({
+        trigger: section,
+        start: 'top 90%',
+        once: true,
+        onEnter: () => revealSection(section),
+      });
+    });
+
+    document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {
+      const speed = Number(el.dataset.parallax || 0.18);
+      gsap.fromTo(
+        el,
+        { y: -48 * speed },
+        {
+          y: 96 * speed,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: el.closest('section') || el.parentElement || el,
+            start: 'top bottom',
+            end: 'bottom top',
+            scrub: true,
+          },
         }
-        ScrollTrigger.create({
-          trigger: section,
-          start: 'top 90%',
-          once: true,
-          onEnter: () => revealSection(section),
+      );
+    });
+
+    const atmosphere = document.querySelector<HTMLElement>('.site-atmosphere');
+    if (atmosphere) {
+      gsap.to(atmosphere, {
+        yPercent: 10,
+        ease: 'none',
+        scrollTrigger: {
+          trigger: document.documentElement,
+          start: 'top top',
+          end: 'bottom bottom',
+          scrub: true,
+        },
+      });
+    }
+
+    if (finePointer()) {
+      document.querySelectorAll<HTMLElement>('.book-tile').forEach((tile) => {
+        const cover = tile.querySelector<HTMLElement>('.book-tile__cover');
+        if (!cover) return;
+
+        const rotX = gsap.quickTo(cover, 'rotateX', {
+          duration: 0.45,
+          ease: 'power3.out',
+        });
+        const rotY = gsap.quickTo(cover, 'rotateY', {
+          duration: 0.45,
+          ease: 'power3.out',
+        });
+        const lift = gsap.quickTo(cover, 'y', { duration: 0.45, ease: 'power3.out' });
+        const skew = gsap.quickTo(tile, 'rotate', { duration: 0.5, ease: 'power3.out' });
+
+        gsap.set(cover, { transformPerspective: 700, transformOrigin: '50% 50%' });
+
+        tile.addEventListener('pointermove', (e) => {
+          const rect = tile.getBoundingClientRect();
+          const px = (e.clientX - rect.left) / rect.width - 0.5;
+          const py = (e.clientY - rect.top) / rect.height - 0.5;
+          rotY(px * 18);
+          rotX(-py * 12);
+          lift(-14);
+          skew(px * -6 - 1.5);
+        });
+
+        tile.addEventListener('pointerleave', () => {
+          rotX(0);
+          rotY(0);
+          lift(0);
+          skew(0);
         });
       });
 
-      document.querySelectorAll<HTMLElement>('[data-parallax]').forEach((el) => {
-        const speed = Number(el.dataset.parallax || 0.18);
+      document.querySelectorAll<HTMLElement>('.pub-card').forEach((card) => {
+        const media = card.querySelector<HTMLElement>('.pub-card__media') || card;
+        const rx = gsap.quickTo(media, 'rotateX', { duration: 0.4, ease: 'power3.out' });
+        const ry = gsap.quickTo(media, 'rotateY', { duration: 0.4, ease: 'power3.out' });
+        gsap.set(media, { transformPerspective: 900, transformStyle: 'preserve-3d' });
+
+        card.addEventListener('pointermove', (e) => {
+          if (!card.classList.contains('pub-card--in')) return;
+          const r = card.getBoundingClientRect();
+          const px = (e.clientX - r.left) / r.width - 0.5;
+          const py = (e.clientY - r.top) / r.height - 0.5;
+          ry(px * 8);
+          rx(-py * 6);
+        });
+        card.addEventListener('pointerleave', () => {
+          rx(0);
+          ry(0);
+        });
+      });
+    }
+
+    document.querySelectorAll<HTMLElement>('[data-kinetic-bio]').forEach((prose) => {
+      prose.querySelectorAll('p').forEach((p) => {
         gsap.fromTo(
-          el,
-          { y: -48 * speed },
+          p,
+          { y: 16, opacity: 0.35 },
           {
-            y: 96 * speed,
-            ease: 'none',
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            ease: 'power2.out',
+            immediateRender: false,
             scrollTrigger: {
-              trigger: el.closest('section') || el.parentElement || el,
-              start: 'top bottom',
-              end: 'bottom top',
-              scrub: true,
+              trigger: p,
+              start: 'top 92%',
+              once: true,
             },
           }
         );
       });
-
-      const atmosphere = document.querySelector<HTMLElement>('.site-atmosphere');
-      if (atmosphere) {
-        gsap.to(atmosphere, {
-          yPercent: 10,
-          ease: 'none',
-          scrollTrigger: {
-            trigger: document.documentElement,
-            start: 'top top',
-            end: 'bottom bottom',
-            scrub: true,
-          },
-        });
-      }
-
-      if (finePointer()) {
-        document.querySelectorAll<HTMLElement>('.book-tile').forEach((tile) => {
-          const cover = tile.querySelector<HTMLElement>('.book-tile__cover');
-          if (!cover) return;
-
-          const rotX = gsap.quickTo(cover, 'rotateX', {
-            duration: 0.45,
-            ease: 'power3.out',
-          });
-          const rotY = gsap.quickTo(cover, 'rotateY', {
-            duration: 0.45,
-            ease: 'power3.out',
-          });
-          const lift = gsap.quickTo(cover, 'y', { duration: 0.45, ease: 'power3.out' });
-          const skew = gsap.quickTo(tile, 'rotate', { duration: 0.5, ease: 'power3.out' });
-
-          gsap.set(cover, { transformPerspective: 700, transformOrigin: '50% 50%' });
-
-          tile.addEventListener('pointermove', (e) => {
-            const rect = tile.getBoundingClientRect();
-            const px = (e.clientX - rect.left) / rect.width - 0.5;
-            const py = (e.clientY - rect.top) / rect.height - 0.5;
-            rotY(px * 18);
-            rotX(-py * 12);
-            lift(-14);
-            skew(px * -6 - 1.5);
-          });
-
-          tile.addEventListener('pointerleave', () => {
-            rotX(0);
-            rotY(0);
-            lift(0);
-            skew(0);
-          });
-        });
-
-        document.querySelectorAll<HTMLElement>('.pub-card').forEach((card) => {
-          // Tilt the media shell — never the card root (avoids fighting entrance opacity/transform)
-          const media =
-            card.querySelector<HTMLElement>('.pub-card__media') || card;
-          const rx = gsap.quickTo(media, 'rotateX', { duration: 0.4, ease: 'power3.out' });
-          const ry = gsap.quickTo(media, 'rotateY', { duration: 0.4, ease: 'power3.out' });
-          gsap.set(media, { transformPerspective: 900, transformStyle: 'preserve-3d' });
-
-          card.addEventListener('pointermove', (e) => {
-            if (!card.classList.contains('pub-card--in')) return;
-            const r = card.getBoundingClientRect();
-            const px = (e.clientX - r.left) / r.width - 0.5;
-            const py = (e.clientY - r.top) / r.height - 0.5;
-            ry(px * 8);
-            rx(-py * 6);
-          });
-          card.addEventListener('pointerleave', () => {
-            rx(0);
-            ry(0);
-          });
-        });
-      }
-
-      document.querySelectorAll<HTMLElement>('[data-kinetic-bio]').forEach((prose) => {
-        prose.querySelectorAll('p').forEach((p) => {
-          gsap.fromTo(
-            p,
-            { y: 16, opacity: 0.35 },
-            {
-              y: 0,
-              opacity: 1,
-              duration: 0.7,
-              ease: 'power2.out',
-              immediateRender: false,
-              scrollTrigger: {
-                trigger: p,
-                start: 'top 92%',
-                once: true,
-              },
-            }
-          );
-        });
-      });
-
-      document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((track) => {
-        const distance = track.scrollWidth / 2;
-        gsap.to(track, {
-          x: -distance,
-          duration: Math.max(28, distance / 40),
-          ease: 'none',
-          repeat: -1,
-        });
-      });
-
-      watchMasonry();
     });
 
-    // Hide pending scroll-reveals only after triggers exist
-    document.documentElement.classList.add('motion-ready');
-    ScrollTrigger.refresh();
-
-    // Fail-safe: never leave a blank static page if a trigger/race stalls
-    safetyTimer = window.setTimeout(() => {
-      revealKinetic();
-      document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
-        el.classList.add('is-visible');
+    document.querySelectorAll<HTMLElement>('[data-marquee]').forEach((track) => {
+      const distance = track.scrollWidth / 2;
+      const tween = gsap.to(track, {
+        x: -distance,
+        duration: Math.max(28, distance / 40),
+        ease: 'none',
+        repeat: -1,
       });
-      document.querySelectorAll<HTMLElement>('.pub-card:not(.pub-card--settled)').forEach((el) => {
-        settlePubCard(el);
-      });
-    }, 2000);
 
-    bindMobileExcerptFocus();
-  } catch {
-    showAllContent();
-    bindMobileExcerptFocus();
-  }
+      const root = track.closest('.journal-marquee') as HTMLElement | null;
+      if (!root) return;
+
+      const pause = () => tween.pause();
+      const play = () => tween.play();
+      root.addEventListener('mouseenter', pause);
+      root.addEventListener('mouseleave', play);
+      root.addEventListener('focusin', pause);
+      root.addEventListener('focusout', (e) => {
+        const next = (e as FocusEvent).relatedTarget;
+        if (!(next instanceof Node) || !root.contains(next)) play();
+      });
+    });
+
+    watchMasonry();
+  });
+
+  document.documentElement.classList.add('motion-ready');
+  ScrollTrigger.refresh();
+
+  safetyTimer = window.setTimeout(() => {
+    revealKinetic();
+    document.querySelectorAll('.reveal:not(.is-visible)').forEach((el) => {
+      el.classList.add('is-visible');
+    });
+    document.querySelectorAll<HTMLElement>('.pub-card:not(.pub-card--settled)').forEach((el) => {
+      settlePubCard(el);
+    });
+  }, 2000);
+
+  bindMobileExcerptFocus();
 }

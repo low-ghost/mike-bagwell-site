@@ -1,6 +1,8 @@
 /**
- * Minimal markdown for the home bio: paragraphs, _italics_, and [links](url).
- * No HTML passthrough - input is escaped first.
+ * Lightweight markdown for short strings stored in JSON (book blurbs).
+ * Full site copy (bio) uses Astro content collections + render() instead.
+ *
+ * Supports: paragraphs, _italics_, and [links](url). HTML is escaped first.
  */
 
 function escapeHtml(text: string): string {
@@ -25,24 +27,21 @@ function renderInline(text: string): string {
   const parts: string[] = [];
   const linkRe = /\[([^\]]+)\]\(([^)\s]+)\)/g;
   let last = 0;
-  let match: RegExpExecArray | null;
+  let match = linkRe.exec(text);
 
-  while ((match = linkRe.exec(text)) !== null) {
+  while (match !== null) {
     parts.push(renderItalics(escapeHtml(text.slice(last, match.index))));
     const label = match[1];
     const href = match[2].trim();
     if (isSafeHref(href)) {
       const external = /^https?:\/\//i.test(href);
-      const attrs = external
-        ? ' target="_blank" rel="noopener noreferrer"'
-        : '';
-      parts.push(
-        `<a href="${escapeHtml(href)}"${attrs}>${renderItalics(escapeHtml(label))}</a>`
-      );
+      const attrs = external ? ' target="_blank" rel="noopener noreferrer"' : '';
+      parts.push(`<a href="${escapeHtml(href)}"${attrs}>${renderItalics(escapeHtml(label))}</a>`);
     } else {
       parts.push(renderItalics(escapeHtml(match[0])));
     }
     last = match.index + match[0].length;
+    match = linkRe.exec(text);
   }
 
   parts.push(renderItalics(escapeHtml(text.slice(last))));

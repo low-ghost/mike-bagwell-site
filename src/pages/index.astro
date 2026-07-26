@@ -1,21 +1,20 @@
 ---
-import { Image, getImage } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { getImage, Image } from 'astro:assets';
+import { getCollection, getEntry, render } from 'astro:content';
 import portrait from '../assets/author/portrait.jpg';
 import Gallery from '../components/Gallery.astro';
 import KineticText from '../components/KineticText.astro';
-import bioMarkdown from '../content/bio.md?raw';
 import Base from '../layouts/Base.astro';
-import { renderBioMarkdown } from '../lib/bio-markdown';
-import {
-  BOOK_WIKIDATA,
-  bookSchema,
-  profilePageSchema,
-} from '../lib/seo-schema';
+import { BOOK_WIKIDATA, bookSchema, profilePageSchema } from '../lib/seo-schema';
+import { normalizeHttpUrl } from '../lib/urls';
 
-const bioHtml = renderBioMarkdown(bioMarkdown);
+const bioEntry = await getEntry('site', 'bio');
+if (!bioEntry) throw new Error('Missing content entry: site/bio');
+const { Content: BioContent } = await render(bioEntry);
 
-const featuredPublications = (await getCollection('publications'))
+const publications = await getCollection('publications');
+
+const featuredPublications = publications
   .filter((p) => p.data.featured)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
@@ -23,14 +22,23 @@ const books = (await getCollection('books'))
   .filter((b) => !b.data.hideFromMain)
   .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
 
-const tickerPubs = [
-  ...new Set(
-    (await getCollection('publications'))
-      .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
-      .slice(0, 18)
-      .map((p) => p.data.publisher)
-  ),
-];
+const tickerPubs: { name: string; url: string; title: string }[] = [];
+const seenPublishers = new Set<string>();
+for (const pub of publications
+  .slice()
+  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime())
+  .slice(0, 24)) {
+  if (seenPublishers.has(pub.data.publisher)) continue;
+  const url = normalizeHttpUrl(pub.data.url);
+  if (!url) continue;
+  seenPublishers.add(pub.data.publisher);
+  tickerPubs.push({
+    name: pub.data.publisher,
+    url,
+    title: pub.data.title,
+  });
+  if (tickerPubs.length >= 14) break;
+}
 
 const notableBookEntries = await Promise.all(
   books
@@ -86,18 +94,47 @@ const notableBookEntries = await Promise.all(
           scramble
           class="kinetic--hero font-display text-[clamp(5.5rem,13vw,8rem)] font-extrabold leading-[0.95] tracking-tight text-[var(--color-ink)] mb-6"
         />
-        <div class="prose prose-xl max-w-3xl" data-kinetic-bio set:html={bioHtml} />
+        <div class="prose prose-xl max-w-3xl" data-kinetic-bio>
+          <BioContent />
+        </div>
       </div>
     </section>
 
-    <div class="journal-marquee mb-20 lg:mb-28" aria-hidden="true">
-      <div class="journal-marquee__fade"></div>
-      <div class="journal-marquee__track" data-marquee>
-        {[...tickerPubs, ...tickerPubs].map((name) => (
-          <span class="journal-marquee__item">{name}</span>
-        ))}
-      </div>
-    </div>
+    {
+      tickerPubs.length > 0 && (
+        <div
+          class="journal-marquee mb-20 lg:mb-28"
+          role="region"
+          aria-label="Recent journals"
+        >
+          <div class="journal-marquee__track" data-marquee>
+            {tickerPubs.map((item) => (
+              <a
+                href={item.url}
+                class="journal-marquee__item"
+                target="_blank"
+                rel="noopener noreferrer"
+                aria-label={`${item.name}: ${item.title}`}
+              >
+                {item.name}
+              </a>
+            ))}
+            {tickerPubs.map((item) => (
+              <a
+                href={item.url}
+                class="journal-marquee__item"
+                target="_blank"
+                rel="noopener noreferrer"
+                tabindex="-1"
+                aria-hidden="true"
+              >
+                {item.name}
+              </a>
+            ))}
+          </div>
+        </div>
+      )
+    }
 
     <section class="reveal mb-20 lg:mb-28">
       <div class="flex flex-wrap items-end justify-between gap-4 mb-8">
@@ -108,7 +145,7 @@ const notableBookEntries = await Promise.all(
             mode="chars"
             when="scroll"
             scramble
-            class="kinetic--section display-section text-[var(--color-ink)]"
+            class="display-section text-[var(--color-ink)]"
           />
         </div>
         <a href="/books/" class="btn-ghost shrink-0 stagger-child">All books →</a>
@@ -161,7 +198,7 @@ const notableBookEntries = await Promise.all(
           mode="chars"
           when="scroll"
           scramble
-          class="kinetic--section display-section text-[var(--color-ink)]"
+          class="display-section text-[var(--color-ink)]"
         />
         <p class="text-base font-semibold text-[var(--color-mute)] stagger-child">
           <span class="hidden md:inline">Hover a cover to peek at the poem</span>

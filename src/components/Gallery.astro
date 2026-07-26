@@ -1,8 +1,8 @@
 ---
-import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
-import PublicationCard from './PublicationCard.astro';
+import { getCollection } from 'astro:content';
 import { FeaturedCarousel } from './FeaturedCarousel';
+import PublicationCard from './PublicationCard.astro';
 
 export interface Props {
   limit?: number;
@@ -14,8 +14,9 @@ const { limit, featured, carousel = false } = Astro.props;
 
 const allPublications = await getCollection('publications');
 
-let publications = allPublications
-  .sort((a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime());
+let publications = allPublications.sort(
+  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
+);
 
 if (featured !== undefined) {
   publications = publications.filter((p) => p.data.featured === featured);

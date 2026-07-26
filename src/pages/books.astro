@@ -1,10 +1,10 @@
 ---
-import Base from '../layouts/Base.astro';
-import KineticText from '../components/KineticText.astro';
-import { Image, getImage } from 'astro:assets';
+import { getImage, Image } from 'astro:assets';
 import { getCollection } from 'astro:content';
+import KineticText from '../components/KineticText.astro';
+import Base from '../layouts/Base.astro';
 import { renderBioMarkdown } from '../lib/bio-markdown';
-import { bookListSchema, BOOK_WIKIDATA, collectionPageSchema } from '../lib/seo-schema';
+import { BOOK_WIKIDATA, bookListSchema, collectionPageSchema } from '../lib/seo-schema';
 
 const books = (await getCollection('books')).sort(
   (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()

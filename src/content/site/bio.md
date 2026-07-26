@@ -1,3 +1,7 @@
+---
+title: Bio
+---
+
 Mike Bagwell is a poet, software engineer, visual artist, and translator. He received an MFA from Sarah Lawrence, and his work appears or is forthcoming in _Lana Turner_, [_Posit_](https://positjournal.com/2026/06/07/mike-bagwell/), [_Poetry Northwest_](https://www.poetrynw.org/underground-water/), [_The Texas Review_](https://thetexasreview.org/issues/), [_ITERANT_](https://iterant.org/authors/mike-bagwell/), [_Sprung Formal_](https://static1.squarespace.com/static/660af67f134e1556be42b99e/t/6630238e95168057bd7bb8a3/1714430873974/SF19.pdf), [_Noir Sauna_](https://www.noir-sauna.org/eight/mike-bagwell), [_Annulet_](https://annuletpoeticsjournal.com/Mike-Bagwell-On-Ben-Segal-s-Tunnels), and others. He was a finalist for the 2025 Marystina Santiestevan First Book Prize from _Conduit_ and the 2025 Colorado Review Prize for Poetry.
 
 Recent chapbooks include [_Poem of Thanks: Swords and the Devil_](https://www.thirtywestph.com/shop/p/poemofthanksswordsandthedevil) (Thirty West 2026), [_Poem of Thanks: A Court of Wands_](https://metatron.press/digipub/poem-of-thanks/) (Metatron 2025), _A Collision of Soul in Midair_ (Bottlecap), and micros from [_Ghost City_](https://ghostcitypress.com/2024-summer-series/poem-of-thanks-the-high-priestess) and [_Rinky Dink_](https://rinky-dink-press.square.site/product/series-11/50).

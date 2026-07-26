@@ -1,12 +1,9 @@
 ---
-import { getCollection } from 'astro:content';
 import { getImage } from 'astro:assets';
-import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
 import { ImageLightbox } from '../../components/ImageLightbox';
-import {
-  breadcrumbSchema,
-  creativeWorkSchema,
-} from '../../lib/seo-schema';
+import Base from '../../layouts/Base.astro';
+import { breadcrumbSchema, creativeWorkSchema } from '../../lib/seo-schema';
 
 export async function getStaticPaths() {
   const designProjects = await getCollection('design');
@@ -17,8 +14,7 @@ export async function getStaticPaths() {
 }
 
 const { project } = Astro.props;
-const { title, body, description, coverImage, images, externalUrl, publishDate } =
-  project.data;
+const { title, body, description, coverImage, images, externalUrl, publishDate } = project.data;
 
 /** Strip Squarespace chrome, especially the broken Instagram social block that left a huge empty clickable gap. */
 function cleanDesignBody(html: string): string {
@@ -39,16 +35,11 @@ const metaDescription =
     ? description
     : `Design project by Mike Bagwell: ${title}. Publication design and print work.`;
 
-const ogImage = coverImage
-  ? await getImage({ src: coverImage, width: 1200, format: 'jpg' })
-  : null;
+const ogImage = coverImage ? await getImage({ src: coverImage, width: 1200, format: 'jpg' }) : null;
 const ogImageUrl = ogImage ? new URL(ogImage.src, Astro.site).href : undefined;
 
 const lightboxImages = await Promise.all(
-  [
-    ...(coverImage ? [{ path: coverImage, title }] : []),
-    ...images,
-  ].map(async (image) => {
+  [...(coverImage ? [{ path: coverImage, title }] : []), ...images].map(async (image) => {
     const optimized = await getImage({
       src: image.path,
       widths: [600, 1000, 1600],

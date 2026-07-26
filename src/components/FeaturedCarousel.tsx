@@ -1,5 +1,6 @@
-import { useEffect, useState, useCallback, useRef } from 'react';
-import { animate } from 'motion';
+import { useCallback, useEffect, useRef, useState } from 'react';
+import { prefersReducedMotion } from '../lib/motion-pref';
+import { normalizeHttpUrl } from '../lib/urls';
 
 export interface FeaturedSlide {
   title: string;
@@ -16,60 +17,35 @@ interface FeaturedCarouselProps {
   slides: FeaturedSlide[];
 }
 
-function normalizeUrl(url: string): string {
-  if (!url) return '';
-  if (url.startsWith('http://') || url.startsWith('https://')) return url;
-  return `https://${url}`;
-}
-
-function prefersReducedMotion(): boolean {
-  return (
-    typeof window !== 'undefined' &&
-    window.matchMedia('(prefers-reduced-motion: reduce)').matches
-  );
-}
-
 export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
   const [index, setIndex] = useState(0);
   const [displayIndex, setDisplayIndex] = useState(0);
-  const [fading, setFading] = useState(false);
+  const [phase, setPhase] = useState<'idle' | 'out' | 'in'>('idle');
   const [paused, setPaused] = useState(false);
   const [dir, setDir] = useState(1);
   const touchStartX = useRef<number | null>(null);
   const pendingIndex = useRef<number | null>(null);
   const fadeTimer = useRef<number | null>(null);
-  const slideRef = useRef<HTMLAnchorElement>(null);
 
   const count = slides.length;
 
-  const clearFadeTimer = () => {
+  const clearFadeTimer = useCallback(() => {
     if (fadeTimer.current != null) {
       window.clearTimeout(fadeTimer.current);
       fadeTimer.current = null;
     }
-  };
+  }, []);
 
   const commitPending = useCallback(() => {
     if (pendingIndex.current == null) return;
     setDisplayIndex(pendingIndex.current);
     setIndex(pendingIndex.current);
     pendingIndex.current = null;
+    setPhase('in');
     requestAnimationFrame(() => {
-      setFading(false);
-      const el = slideRef.current;
-      if (!el || prefersReducedMotion()) return;
-      // Typed as Element keyframes — motion's DOM overload is picky in v12
-      void animate(
-        el,
-        {
-          opacity: [0, 1],
-          x: [10 * dir, 0],
-          scale: [0.985, 1],
-        },
-        { duration: 0.42, ease: [0.23, 1, 0.32, 1] }
-      );
+      requestAnimationFrame(() => setPhase('idle'));
     });
-  }, [dir]);
+  }, []);
 
   const go = useCallback(
     (next: number) => {
@@ -77,8 +53,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
       const normalized = ((next % count) + count) % count;
       if (normalized === (pendingIndex.current ?? index)) return;
 
-      const forward =
-        (normalized - index + count) % count <= Math.floor(count / 2);
+      const forward = (normalized - index + count) % count <= Math.floor(count / 2);
       setDir(forward ? 1 : -1);
 
       if (prefersReducedMotion()) {
@@ -86,23 +61,19 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
         pendingIndex.current = null;
         setIndex(normalized);
         setDisplayIndex(normalized);
-        setFading(false);
+        setPhase('idle');
         return;
       }
 
       pendingIndex.current = normalized;
-      setFading(true);
+      setPhase('out');
       clearFadeTimer();
-      fadeTimer.current = window.setTimeout(() => {
-        commitPending();
-      }, 280);
+      fadeTimer.current = window.setTimeout(commitPending, 280);
     },
-    [count, index, commitPending]
+    [count, index, commitPending, clearFadeTimer]
   );
 
-  useEffect(() => {
-    return () => clearFadeTimer();
-  }, []);
+  useEffect(() => () => clearFadeTimer(), [clearFadeTimer]);
 
   useEffect(() => {
     if (paused || count <= 1) return;
@@ -113,7 +84,8 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
   if (count === 0) return null;
 
   const slide = slides[displayIndex];
-  const href = normalizeUrl(slide.url);
+  const href = normalizeHttpUrl(slide.url);
+  const phaseClass = phase === 'out' ? ' is-fading' : phase === 'in' ? ' is-entering' : '';
 
   return (
     <div
@@ -162,13 +134,10 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
       </div>
 
       <a
-        ref={slideRef}
         href={href}
         target="_blank"
         rel="noopener noreferrer"
-        className={`featured-carousel__slide group grid md:grid-cols-[minmax(0,380px)_1fr] gap-8 md:gap-12 items-stretch no-underline text-inherit outline-none${
-          fading ? ' is-fading' : ''
-        }`}
+        className={`featured-carousel__slide group grid md:grid-cols-[minmax(0,380px)_1fr] gap-8 md:gap-12 items-stretch no-underline text-inherit outline-none${phaseClass}`}
         style={{ ['--slide-dir' as string]: String(dir) }}
         aria-live="polite"
       >
@@ -221,9 +190,7 @@ export function FeaturedCarousel({ slides }: FeaturedCarouselProps) {
               type="button"
               aria-label={`Go to featured item ${i + 1}`}
               aria-current={i === displayIndex ? 'true' : undefined}
-              className={`featured-carousel__dot${
-                i === displayIndex ? ' is-active' : ''
-              }`}
+              className={`featured-carousel__dot${i === displayIndex ? ' is-active' : ''}`}
               onClick={() => go(i)}
             />
           ))}

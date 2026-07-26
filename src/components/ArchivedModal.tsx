@@ -1,4 +1,5 @@
-import { useEffect, useId, useRef, useState } from 'react';
+import { useEffect, useId, useRef } from 'react';
+import { useDialogPresence } from './ui/useDialogPresence';
 
 interface ArchivedModalProps {
   title: string;
@@ -8,16 +9,6 @@ interface ArchivedModalProps {
   onClose: () => void;
 }
 
-export function useArchivedModal() {
-  const [isOpen, setIsOpen] = useState(false);
-
-  return {
-    isOpen,
-    open: () => setIsOpen(true),
-    close: () => setIsOpen(false),
-  };
-}
-
 export function ArchivedModal({
   title,
   publisher,
@@ -25,21 +16,9 @@ export function ArchivedModal({
   isOpen,
   onClose,
 }: ArchivedModalProps) {
-  const [mounted, setMounted] = useState(false);
-  const [visible, setVisible] = useState(false);
+  const { mounted, visible, stateClass, handleTransitionEnd } = useDialogPresence(isOpen);
   const titleId = useId();
   const closeBtnRef = useRef<HTMLButtonElement>(null);
-
-  useEffect(() => {
-    if (isOpen) {
-      setMounted(true);
-      const id = requestAnimationFrame(() => {
-        requestAnimationFrame(() => setVisible(true));
-      });
-      return () => cancelAnimationFrame(id);
-    }
-    setVisible(false);
-  }, [isOpen]);
 
   useEffect(() => {
     if (!mounted || !visible) return;
@@ -57,14 +36,7 @@ export function ArchivedModal({
     };
   }, [mounted, visible, onClose]);
 
-  const handleTransitionEnd = (e: React.TransitionEvent<HTMLDivElement>) => {
-    if (e.target !== e.currentTarget) return;
-    if (!isOpen && !visible) setMounted(false);
-  };
-
   if (!mounted) return null;
-
-  const stateClass = visible ? ' is-open' : ' is-closing';
 
   return (
     <div
@@ -92,10 +64,7 @@ export function ArchivedModal({
           {title}
         </h2>
         <p className="text-sm text-[var(--color-mute)] mb-6">{publisher}</p>
-        <div
-          className="prose max-w-none"
-          dangerouslySetInnerHTML={{ __html: archivedBody }}
-        />
+        <div className="prose max-w-none" dangerouslySetInnerHTML={{ __html: archivedBody }} />
       </div>
     </div>
   );

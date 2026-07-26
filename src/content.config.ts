@@ -58,4 +58,12 @@ const design = defineCollection({
     }),
 });
 
-export const collections = { publications, books, design };
+/** Site copy authored as Markdown (Astro renders via content collections). */
+const site = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/site' }),
+  schema: z.object({
+    title: z.string().default(''),
+  }),
+});
+
+export const collections = { publications, books, design, site };

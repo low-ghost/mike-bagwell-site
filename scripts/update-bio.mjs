@@ -1,23 +1,24 @@
 #!/usr/bin/env node
 /**
- * Update src/content/bio.md from the system clipboard.
+ * Update src/content/site/bio.md from the system clipboard.
  *
  * Usage:
  *   npm run bio
  *   node scripts/update-bio.mjs
  *   node scripts/update-bio.mjs --dry-run
  *
- * Supports: paragraphs (blank line), _italics_, [links](url)
+ * Clipboard should be markdown body only (paragraphs, _italics_, [links](url)).
+ * Frontmatter is preserved/rewritten automatically.
  */
 
 import { execFileSync } from 'node:child_process';
-import { writeFileSync, readFileSync } from 'node:fs';
+import { readFileSync, writeFileSync } from 'node:fs';
+import { platform } from 'node:os';
 import { dirname, join } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { platform } from 'node:os';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const bioPath = join(__dirname, '../src/content/bio.md');
+const bioPath = join(__dirname, '../src/content/site/bio.md');
 const dryRun = process.argv.includes('--dry-run');
 
 function readClipboard() {
@@ -48,8 +49,20 @@ function readClipboard() {
   process.exit(1);
 }
 
+function stripFrontmatter(text) {
+  if (!text.startsWith('---')) return text;
+  const end = text.indexOf('\n---', 3);
+  if (end === -1) return text;
+  return text.slice(end + 4).replace(/^\n+/, '');
+}
+
 function normalizeBio(text) {
-  return text.replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').trim() + '\n';
+  const body =
+    text
+      .replace(/\r\n/g, '\n')
+      .replace(/[ \t]+\n/g, '\n')
+      .trim() + '\n';
+  return `---\ntitle: Bio\n---\n\n${stripFrontmatter(body)}`;
 }
 
 const raw = readClipboard();
@@ -68,12 +81,12 @@ const prev = (() => {
 })();
 
 if (prev === next) {
-  console.log('Bio unchanged (clipboard matches src/content/bio.md).');
+  console.log('Bio unchanged (clipboard matches src/content/site/bio.md).');
   process.exit(0);
 }
 
 console.log('--- bio preview ---');
-console.log(next.trimEnd());
+console.log(stripFrontmatter(next).trimEnd());
 console.log('-------------------');
 
 if (dryRun) {

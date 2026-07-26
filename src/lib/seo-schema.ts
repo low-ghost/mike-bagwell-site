@@ -114,11 +114,7 @@ export function profilePageSchema(url: string) {
   };
 }
 
-export function collectionPageSchema(opts: {
-  url: string;
-  name: string;
-  description: string;
-}) {
+export function collectionPageSchema(opts: { url: string; name: string; description: string }) {
   return {
     '@type': 'CollectionPage',
     '@id': `${opts.url}#webpage`,
@@ -175,11 +171,7 @@ export function bookSchema(book: {
     bookFormat: 'https://schema.org/Paperback',
     genre: 'Poetry',
     ...(book.url ? { url: book.url } : {}),
-    ...(sameAs.length === 1
-      ? { sameAs: sameAs[0] }
-      : sameAs.length > 1
-        ? { sameAs }
-        : {}),
+    ...(sameAs.length === 1 ? { sameAs: sameAs[0] } : sameAs.length > 1 ? { sameAs } : {}),
     ...(book.image ? { image: book.image } : {}),
   };
 }
@@ -223,9 +215,7 @@ export function creativeWorkSchema(opts: {
     author: { '@id': PERSON_ID },
     creator: { '@id': PERSON_ID },
     ...(opts.image ? { image: opts.image } : {}),
-    ...(opts.datePublished
-      ? { datePublished: opts.datePublished.toISOString().slice(0, 10) }
-      : {}),
+    ...(opts.datePublished ? { datePublished: opts.datePublished.toISOString().slice(0, 10) } : {}),
   };
 }
 

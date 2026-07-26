@@ -3,8 +3,8 @@
  * Seeds potentials/ from known post-Couplet acceptances + manual corrections.
  * Re-run safely overwrites only files listed here.
  */
-import { writeFile, mkdir } from 'fs/promises';
-import { join, dirname } from 'path';
+import { mkdir, writeFile } from 'fs/promises';
+import { dirname, join } from 'path';
 import { fileURLToPath } from 'url';
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
@@ -84,7 +84,8 @@ const potentials = [
     published: false,
     status: 'pending',
     submissionId: 439,
-    notes: 'solicited (pakistan). All but first 2 segments. Accepted but not published yet — skip research.',
+    notes:
+      'solicited (pakistan). All but first 2 segments. Accepted but not published yet — skip research.',
   },
 
   // --- books already on site (skip journal conversion) ---
@@ -154,13 +155,7 @@ const potentials = [
     id: 'do-not-submit',
     title: '5 Poems at Do Not Submit',
     publisher: 'Do Not Submit',
-    pieces: [
-      'All Good Things',
-      'Corerot',
-      'Descension',
-      'Fight or Flee',
-      'Grandstanding',
-    ],
+    pieces: ['All Good Things', 'Corerot', 'Descension', 'Fight or Flee', 'Grandstanding'],
     acceptedDate: '2026-02-10',
     published: true,
     status: 'pending',
@@ -201,7 +196,7 @@ const potentials = [
     status: 'pending',
     submissionId: 512,
     notes:
-      "From Dusie/Rob McLennan packet (acceptedDate). Notes say published as Tuesday Poem ~June 23 — use research.pubDate for that.",
+      'From Dusie/Rob McLennan packet (acceptedDate). Notes say published as Tuesday Poem ~June 23 — use research.pubDate for that.',
   },
   {
     id: 'periodicities',
@@ -275,7 +270,8 @@ const potentials = [
     published: true,
     status: 'pending',
     submissionId: null,
-    notes: 'Manual add. Piece titles TBD during research. acceptedDate ordered between Aphor and Handwritten & Co.',
+    notes:
+      'Manual add. Piece titles TBD during research. acceptedDate ordered between Aphor and Handwritten & Co.',
   },
   {
     id: 'aphor-magazine',
@@ -306,11 +302,7 @@ const potentials = [
     id: 'after-happy-hour-review',
     title: '3 Poems at After Happy Hour Review',
     publisher: 'After Happy Hour Review',
-    pieces: [
-      'A Fine Form of Mercy',
-      'Taxonomy',
-      'What is Happening Now Cannot Happen Again',
-    ],
+    pieces: ['A Fine Form of Mercy', 'Taxonomy', 'What is Happening Now Cannot Happen Again'],
     acceptedDate: '2025-03-27',
     published: true,
     status: 'pending',
