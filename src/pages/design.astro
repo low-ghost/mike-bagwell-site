@@ -37,7 +37,7 @@ const description =
     <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8 sm:gap-10">
       {sortedProjects.map((project, i) => (
         <a
-          href={`/design/${project.data.slug}/`}
+          href={`/design/${project.id}/`}
           class="group reveal block no-underline text-inherit"
           style={`transition-delay: ${Math.min(i * 60, 240)}ms`}
         >

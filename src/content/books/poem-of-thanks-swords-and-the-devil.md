@@ -1,0 +1,11 @@
+---
+title: "Poem of Thanks: Swords and the Devil"
+press: Thirty West, 2026
+pubDate: 2026-01-01
+url: https://www.thirtywestph.com/shop/p/poemofthanksswordsandthedevil
+linkLabel: Available from Thirty West
+image: ../../assets/books/poem-of-thanks-swords-and-the-devil.webp
+hideFromMain: false
+---
+
+This new chapbook is another installment in his "Poem of Thanks" series, following previous occult & tarot chapbooks (A Court of Wands; The High Priestess). Stark imagery, existential questions, and mysticism flow from the page and into your eyes at a breakneck speed. Swords and The Devil is Bagwell's fiercest and most experimental poetic musing to date.

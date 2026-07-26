@@ -51,6 +51,25 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
       publishedTime={publishedTime}
       noindex={noindex}
     />
+    {import.meta.env.PUBLIC_GA_MEASUREMENT_ID && (
+      <>
+        <script
+          async
+          src={`https://www.googletagmanager.com/gtag/js?id=${import.meta.env.PUBLIC_GA_MEASUREMENT_ID}`}
+        />
+        <script
+          is:inline
+          define:vars={{ gaId: import.meta.env.PUBLIC_GA_MEASUREMENT_ID }}
+        >
+          window.dataLayer = window.dataLayer || [];
+          function gtag() {
+            dataLayer.push(arguments);
+          }
+          gtag('js', new Date());
+          gtag('config', gaId);
+        </script>
+      </>
+    )}
     {SAME_AS.map((href) => <link rel="me" href={href} />)}
     <link
       rel="preload"
@@ -207,7 +226,7 @@ const structuredData = jsonLdGraph([personSchema(), websiteSchema(), ...schema])
 
     <script>
       import { bindScrambleHover } from '../lib/scramble';
-      import { initSiteMotion } from '../scripts/site-motion';
+import { initSiteMotion } from '../scripts/site-motion';
 
       const bindNav = () => {
         const toggle = document.querySelector<HTMLButtonElement>('[data-nav-toggle]');

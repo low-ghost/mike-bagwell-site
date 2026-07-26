@@ -1,4 +1,4 @@
-# Redirects for old Squarespace URLs
+# Redirects for legacy /writing/<slug> URLs
 # Format: /old-path /new-path status-code
 
 /writing/2-poems-at-nthposition /writing/ 301

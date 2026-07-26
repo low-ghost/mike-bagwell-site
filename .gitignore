@@ -44,9 +44,6 @@ yarn-error.log*
 *.tsbuildinfo
 next-env.d.ts
 
-# scripts
-/scripts/_raw/
-
 # publication research staging / caches
 /potentials/.research-cache/
 /potentials/_staging/

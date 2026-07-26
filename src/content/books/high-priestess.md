@@ -1,0 +1,11 @@
+---
+title: "Poem of Thanks: The High Priestess"
+press: Ghost City Press, 2024
+pubDate: 2024-06-01
+url: https://ghostcitypress.com/2024-summer-series/poem-of-thanks-the-high-priestess
+linkLabel: Available for free from Ghost City Press
+image: ../../assets/books/high-priestess.png
+hideFromMain: false
+---
+
+An excerpt from the book-length _Poem of Thanks_. Cover art by Rebecca Miller.

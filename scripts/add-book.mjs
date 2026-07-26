@@ -5,14 +5,15 @@
  * Usage: npm run book
  *    or: node scripts/add-book.mjs [path/to/cover.jpg]
  *
- * Moves the cover into src/assets/books/ and writes src/content/books/<slug>.json.
+ * Moves the cover into src/assets/books/ and writes src/content/books/<slug>.md
+ * (YAML frontmatter + markdown body). Schema is enforced by Astro at build time.
  */
 
-import { existsSync } from 'fs';
-import { copyFile, mkdir, rename, unlink, writeFile } from 'fs/promises';
-import { dirname, extname, join, resolve } from 'path';
-import readline from 'readline';
-import { fileURLToPath } from 'url';
+import { existsSync } from 'node:fs';
+import { copyFile, mkdir, rename, unlink, writeFile } from 'node:fs/promises';
+import { dirname, extname, join, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
+import readline from 'node:readline';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -72,6 +73,47 @@ function parseReleaseDate(raw) {
   return d.toISOString().slice(0, 10);
 }
 
+function yamlQuote(value) {
+  const s = String(value);
+  if (/[:#{}[\],&*?|!<>=%@`]|"|'|\n/.test(s) || s !== s.trim()) {
+    return JSON.stringify(s);
+  }
+  return s;
+}
+
+function buildBookMarkdown({
+  title,
+  shortTitle,
+  press,
+  pubDate,
+  url,
+  linkLabel,
+  image,
+  hideFromMain,
+  body,
+}) {
+  const lines = [
+    '---',
+    `title: ${yamlQuote(title)}`,
+  ];
+  if (shortTitle) lines.push(`shortTitle: ${yamlQuote(shortTitle)}`);
+  lines.push(
+    `press: ${yamlQuote(press)}`,
+    `pubDate: ${pubDate}`,
+    `url: ${yamlQuote(url)}`
+  );
+  if (linkLabel) lines.push(`linkLabel: ${yamlQuote(linkLabel)}`);
+  lines.push(
+    `image: ${yamlQuote(image)}`,
+    `hideFromMain: ${hideFromMain}`,
+    '---',
+    '',
+    body.trim(),
+    ''
+  );
+  return lines.join('\n');
+}
+
 /** Move file; fall back to copy+unlink across devices. */
 async function moveFile(from, to) {
   try {
@@ -102,16 +144,22 @@ async function addBook() {
     if (!pubDateRaw) throw new Error('Release date is required');
     const pubDate = parseReleaseDate(pubDateRaw);
 
-    const description = await askMultiline(
+    const body = await askMultiline(
       rl,
-      'Description (markdown: paragraphs, _italics_, [links](url).\nEnd with a blank line):'
+      'Description body (markdown: paragraphs, _italics_, [links](url).\nEnd with a blank line):'
     );
-    if (!description) throw new Error('Description is required');
+    if (!body) throw new Error('Description is required');
 
     const url = (await ask(rl, 'URL (purchase / info link, optional): ')).trim();
+    if (url && !/^https?:\/\/\S+$/i.test(url)) {
+      throw new Error('URL must be an absolute http(s) link');
+    }
     const linkLabel = url
       ? (await ask(rl, 'Link label (e.g. "Available from Thirty West"): ')).trim()
       : '';
+    if (url && !linkLabel) {
+      throw new Error('Link label is required when URL is set');
+    }
 
     const hideRaw = (await ask(rl, 'Hide from home shelf? (y/N): ')).trim().toLowerCase();
     const hideFromMain = hideRaw.startsWith('y');
@@ -135,7 +183,7 @@ async function addBook() {
     await mkdir(CONTENT_DIR, { recursive: true });
     await mkdir(ASSETS_DIR, { recursive: true });
 
-    const contentPath = join(CONTENT_DIR, `${slug}.json`);
+    const contentPath = join(CONTENT_DIR, `${slug}.md`);
     const targetImagePath = join(ASSETS_DIR, imageFilename);
 
     if (existsSync(contentPath)) {
@@ -148,19 +196,19 @@ async function addBook() {
     await moveFile(sourceImage, targetImagePath);
     console.log(`✓ Moved cover → ${targetImagePath}`);
 
-    const contentData = {
+    const markdown = buildBookMarkdown({
       title,
-      ...(shortTitle ? { shortTitle } : {}),
+      shortTitle,
       press,
       pubDate,
-      description,
       url,
-      ...(linkLabel ? { linkLabel } : {}),
+      linkLabel,
       image: `../../assets/books/${imageFilename}`,
       hideFromMain,
-    };
+      body,
+    });
 
-    await writeFile(contentPath, JSON.stringify(contentData, null, 2) + '\n');
+    await writeFile(contentPath, markdown);
     console.log(`✓ Wrote ${contentPath}`);
 
     console.log('\nDone. Review, then:');

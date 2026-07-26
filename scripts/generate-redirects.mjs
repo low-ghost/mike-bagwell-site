@@ -1,8 +1,8 @@
 #!/usr/bin/env node
 
-import { readdir, readFile, writeFile } from 'fs/promises';
-import { dirname, join } from 'path';
-import { fileURLToPath } from 'url';
+import { readdir, readFile, writeFile } from 'node:fs/promises';
+import { dirname, join } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -33,7 +33,7 @@ async function generateRedirects() {
   redirects.sort();
 
   const redirectsContent = [
-    '# Redirects for old Squarespace URLs',
+    '# Redirects for legacy /writing/<slug> URLs',
     '# Format: /old-path /new-path status-code',
     '',
     ...redirects,

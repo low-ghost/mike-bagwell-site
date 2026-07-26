@@ -1,35 +1,27 @@
 ---
 import { getImage } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { getCollection, render } from 'astro:content';
 import { ImageLightbox } from '../../components/ImageLightbox';
 import Base from '../../layouts/Base.astro';
 import { breadcrumbSchema, creativeWorkSchema } from '../../lib/seo-schema';
 
 export async function getStaticPaths() {
   const designProjects = await getCollection('design');
-  return designProjects.map((project) => ({
-    params: { slug: project.data.slug },
-    props: { project },
-  }));
+  return Promise.all(
+    designProjects.map(async (project) => {
+      const { Content } = await render(project);
+      return {
+        params: { slug: project.id },
+        props: { project, Content },
+      };
+    })
+  );
 }
 
-const { project } = Astro.props;
-const { title, body, description, coverImage, images, externalUrl, publishDate } = project.data;
+const { project, Content } = Astro.props;
+const { title, description, coverImage, images, externalUrl, publishDate } = project.data;
 
-/** Strip Squarespace chrome, especially the broken Instagram social block that left a huge empty clickable gap. */
-function cleanDesignBody(html: string): string {
-  let out = html;
-  // Social blocks are usually trailing and often truncated mid-SVG in the extract.
-  out = out.replace(/<div class="sqs-block-socialaccountlinks[\s\S]*/gi, '');
-  out = out.replace(/<a[^>]*instagram\.com\/low_gh0st[^>]*>[\s\S]*?(?:<\/a>|$)/gi, '');
-  out = out.replace(/style="[^"]*"/g, '');
-  out = out.replace(/<style[\s\S]*?<\/style>/g, '');
-  out = out.replace(/<div class="sqs-[^"]*"[^>]*>/g, '<div>');
-  return out.trim();
-}
-
-const cleanBody = body ? cleanDesignBody(body) : '';
-const pageUrl = `https://mikebagwell.me/design/${project.data.slug}/`;
+const pageUrl = `https://mikebagwell.me/design/${project.id}/`;
 const metaDescription =
   description && description !== title
     ? description
@@ -52,6 +44,8 @@ const lightboxImages = await Promise.all(
     };
   })
 );
+
+const external = externalUrl?.trim() || '';
 ---
 
 <Base
@@ -90,31 +84,32 @@ const lightboxImages = await Promise.all(
           {title}
         </h1>
 
-        {cleanBody && (
-          <div
-            class="prose prose-xl max-w-3xl"
-            set:html={cleanBody}
-          />
-        )}
+        <div class="prose prose-xl max-w-3xl">
+          <Content />
+        </div>
 
-        {externalUrl && (
-          <a
-            href={externalUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            class="inline-flex items-center gap-2 text-[var(--color-accent-deep)] hover:text-[var(--color-accent)] font-semibold"
-          >
-            View Project →
-          </a>
-        )}
+        {
+          external && (
+            <a
+              href={external}
+              target="_blank"
+              rel="noopener noreferrer"
+              class="inline-flex items-center gap-2 text-[var(--color-accent-deep)] hover:text-[var(--color-accent)] font-semibold"
+            >
+              View Project →
+            </a>
+          )
+        }
       </header>
 
-      {lightboxImages.length > 0 && (
-        <section class="space-y-6 reveal">
-          <h2 class="display-section text-[var(--color-ink)]">Gallery</h2>
-          <ImageLightbox client:load images={lightboxImages} />
-        </section>
-      )}
+      {
+        lightboxImages.length > 0 && (
+          <section class="space-y-6 reveal">
+            <h2 class="display-section text-[var(--color-ink)]">Gallery</h2>
+            <ImageLightbox client:load images={lightboxImages} />
+          </section>
+        )
+      }
     </article>
   </div>
 </Base>

@@ -1,7 +1,7 @@
 import { getCollection } from 'astro:content';
 import rss from '@astrojs/rss';
 import type { APIContext } from 'astro';
-import { squarespaceGuidFromArchivedBody } from '../lib/squarespace-guid';
+import { legacyRssGuidFromArchivedBody } from '../lib/legacy-rss-guid';
 import { normalizeHttpUrl } from '../lib/urls';
 
 export async function GET(context: APIContext) {
@@ -20,17 +20,15 @@ export async function GET(context: APIContext) {
     items: sortedPublications.map((pub) => {
       const external = normalizeHttpUrl(pub.data.url ?? '');
       const url = external || `${siteUrl}writing#${pub.id}`;
-      const squarespaceGuid = squarespaceGuidFromArchivedBody(pub.data.archivedBody);
+      const legacyGuid = legacyRssGuidFromArchivedBody(pub.data.archivedBody);
 
       return {
         title: pub.data.title,
         pubDate: pub.data.pubDate,
         description: `Published in ${pub.data.publisher}`,
         link: url,
-        // Keep Squarespace guids so existing subscribers don't see a flood of "new" items.
-        ...(squarespaceGuid
-          ? { customData: `<guid isPermaLink="false">${squarespaceGuid}</guid>` }
-          : {}),
+        // Preserve legacy guids so existing subscribers don't see a flood of "new" items.
+        ...(legacyGuid ? { customData: `<guid isPermaLink="false">${legacyGuid}</guid>` } : {}),
       };
     }),
     customData: `<language>en-us</language>`,

@@ -68,6 +68,9 @@ export default defineConfig({
   output: 'static',
   trailingSlash: 'always',
   compressHTML: true,
+  prefetch: {
+    prefetchAll: true,
+  },
   integrations: [
     react(),
     sitemap({

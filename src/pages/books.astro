@@ -1,37 +1,20 @@
 ---
-import { getImage, Image } from 'astro:assets';
-import { getCollection } from 'astro:content';
+import { Image } from 'astro:assets';
 import KineticText from '../components/KineticText.astro';
 import Base from '../layouts/Base.astro';
-import { renderBioMarkdown } from '../lib/bio-markdown';
-import { BOOK_WIKIDATA, bookListSchema, collectionPageSchema } from '../lib/seo-schema';
+import { bookListItems, getBooksWithContent } from '../lib/books';
+import { bookListSchema, collectionPageSchema } from '../lib/seo-schema';
 
-const books = (await getCollection('books')).sort(
-  (a, b) => b.data.pubDate.getTime() - a.data.pubDate.getTime()
-);
+const books = await getBooksWithContent();
 
 const pageUrl = 'https://mikebagwell.me/books/';
 const title = 'Books | Mike Bagwell';
 const description =
   'Chapbooks and collections by Mike Bagwell, including Poem of Thanks and other published books from Thirty West, Metatron, Bottlecap, and more.';
 
-const schemaBooks = await Promise.all(
-  books.map(async (book) => {
-    const optimized = await getImage({
-      src: book.data.image,
-      width: 800,
-      format: 'jpg',
-    });
-    const href = book.data.url?.trim();
-    return {
-      title: book.data.title,
-      press: book.data.press,
-      pubDate: book.data.pubDate,
-      url: href && /^https?:\/\//i.test(href) ? href : undefined,
-      image: new URL(optimized.src, Astro.site).href,
-      sameAs: BOOK_WIKIDATA[book.data.title],
-    };
-  })
+const schemaBooks = await bookListItems(
+  books.map(({ book }) => book),
+  Astro.site
 );
 ---
 
@@ -59,46 +42,55 @@ const schemaBooks = await Promise.all(
     </header>
 
     <div class="space-y-24">
-      {books.map((book, i) => {
-        const { title, press, description, image, url, linkLabel } = book.data;
-        const descriptionHtml = renderBioMarkdown(description);
-        const hasExternalUrl = /^https?:\/\//i.test(url);
-        const ctaHtml =
-          hasExternalUrl && linkLabel
-            ? renderBioMarkdown(`[${linkLabel}](${url})`)
-            : '';
+      {
+        books.map(({ book, Content }, i) => {
+          const { title, press, image, url, linkLabel } = book.data;
+          const hasExternalUrl = url.length > 0;
 
-        return (
-          <section class="reveal book-entry">
-            <div class="book-entry__cover">
-              <Image 
-                src={image} 
-                alt={`${title} cover`}
-                class="book-entry__image"
-                widths={[360, 720]}
-                sizes="(max-width: 768px) 70vw, 280px"
-                loading={i === 0 ? 'eager' : 'lazy'}
-                decoding="async"
-              />
-            </div>
-            <div>
-              <h2 class="font-display text-4xl font-normal tracking-tight mb-3">
-                {hasExternalUrl ? (
-                  <a href={url} target="_blank" rel="noopener noreferrer" class="hover:opacity-70 transition-opacity">
+          return (
+            <section class="reveal book-entry">
+              <div class="book-entry__cover">
+                <Image
+                  src={image}
+                  alt={`${title} cover`}
+                  class="book-entry__image"
+                  widths={[360, 720]}
+                  sizes="(max-width: 768px) 70vw, 280px"
+                  loading={i === 0 ? 'eager' : 'lazy'}
+                  decoding="async"
+                />
+              </div>
+              <div>
+                <h2 class="font-display text-4xl font-normal tracking-tight mb-3">
+                  {hasExternalUrl ? (
+                    <a
+                      href={url}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="hover:opacity-70 transition-opacity"
+                    >
+                      <em>{title}</em>
+                    </a>
+                  ) : (
                     <em>{title}</em>
-                  </a>
-                ) : (
-                  <em>{title}</em>
-                )}
-              </h2>
-              <p class="text-lg text-[var(--color-mute)] mb-4">
-                {press}
-              </p>
-              <div class="prose prose-xl" set:html={descriptionHtml + ctaHtml} />
-            </div>
-          </section>
-        );
-      })}
+                  )}
+                </h2>
+                <p class="text-lg text-[var(--color-mute)] mb-4">{press}</p>
+                <div class="prose prose-xl">
+                  <Content />
+                  {hasExternalUrl && linkLabel && (
+                    <p>
+                      <a href={url} target="_blank" rel="noopener noreferrer">
+                        {linkLabel}
+                      </a>
+                    </p>
+                  )}
+                </div>
+              </div>
+            </section>
+          );
+        })
+      }
     </div>
   </div>
 </Base>
