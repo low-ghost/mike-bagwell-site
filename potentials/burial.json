@@ -6,8 +6,24 @@
     "Tourist"
   ],
   "acceptedDate": "2026-04-22",
-  "published": false,
-  "status": "pending",
+  "published": true,
+  "status": "converted",
   "submissionId": 546,
-  "notes": "email, Z.H. Hill. Accepted but not published yet — skip research."
+  "notes": "email, Z.H. Hill. User confirmed published — researching.",
+  "research": {
+    "url": "https://burialmagazine.neocities.org/tourist",
+    "excerpt": "I was looking for a good thing / to try about. Every year, / there are parades for veterans. / That might be something.",
+    "pubDate": "2026-07-28",
+    "coverPath": "potentials/_staging/burial/cover.jpg",
+    "igPosts": [],
+    "dateCandidates": [],
+    "sources": [
+      "web-search",
+      "page",
+      "user-excerpt"
+    ],
+    "researchedAt": "2026-07-31T16:47:23.551Z"
+  },
+  "convertedAt": "2026-07-31T16:47:23.586Z",
+  "publicationSlug": "burial"
 }
